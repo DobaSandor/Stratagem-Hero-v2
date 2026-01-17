@@ -47,7 +47,7 @@ interface BattleshipGameProps {
 const CONSUMABLES = [
     { id: 'repair', name: 'Nano-Repair', icon: '🔧', cost: 500, desc: 'Restores 1 HP to a damaged ship.' },
     { id: 'cooldown', name: 'Rapid Cooldown', icon: '⚡', cost: 750, desc: 'Instantly reloads all Stratagems.' },
-    { id: 'radar', name: 'Precise Radar', icon: '/icons/radar_upgrade.png', cost: 100, desc: 'Reveals one enemy ship tile. Limit 3 per wave.' },
+    { id: 'radar', name: 'Precise Radar', icon: `${import.meta.env.BASE_URL}icons/radar_upgrade.png`, cost: 100, desc: 'Reveals one enemy ship tile. Limit 3 per wave.' },
 ];
 
 const AMMO_UPGRADES = [
@@ -159,9 +159,9 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
 
         // Player Stratagems (Reload per wave or carry over? Reload is easier for balance)
         const stratagems = [
-            { name: 'Orbital Laser', count: 1 + Math.floor(wave / 5), icon: '/stratagems/orbital-laser.png' },
-            { name: 'Emergency Shield', count: 1, icon: '/icons/Emergency Shield.png' },
-            { name: 'Reinforce', count: 1, icon: '/stratagems/reinforce.png' } // Assuming this exists or generic
+            { name: 'Orbital Laser', count: 1 + Math.floor(wave / 5), icon: `${import.meta.env.BASE_URL}stratagems/orbital-laser.png` },
+            { name: 'Emergency Shield', count: 1, icon: `${import.meta.env.BASE_URL}icons/Emergency Shield.png` },
+            { name: 'Reinforce', count: 1, icon: `${import.meta.env.BASE_URL}stratagems/reinforce.png` } // Assuming this exists or generic
         ];
 
         return {
@@ -531,14 +531,14 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
             missionConfig.ships.forEach(shipConfig => {
                 for (let i = 0; i < shipConfig.count; i++) {
                     let size = { width: 1, height: 1 };
-                    let icon = '/ships/eagle-1.png';
+                    let icon = `${import.meta.env.BASE_URL}ships/eagle-1.png`;
 
                     if (shipConfig.name === 'Pelican-1') {
                         size = { width: 2, height: 2 };
-                        icon = '/ships/super-destroyer.png';
+                        icon = `${import.meta.env.BASE_URL}ships/super-destroyer.png`;
                     } else if (shipConfig.name === 'Super Destroyer') {
                         size = { width: 4, height: 2 };
-                        icon = '/ships/pelican-1.png';
+                        icon = `${import.meta.env.BASE_URL}ships/pelican-1.png`;
                     }
 
                     ships.push({
@@ -555,17 +555,17 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                 missionConfig.enemyShips.forEach(shipConfig => {
                     for (let i = 0; i < shipConfig.count; i++) {
                         let size = { width: 1, height: 1 };
-                        let icon = '/ships/Leviathan.png'; // Default for 1x1 (Stingray)
+                        let icon = `${import.meta.env.BASE_URL}ships/Leviathan.png`; // Default for 1x1 (Stingray)
 
                         if (shipConfig.name === 'Dropship') {
                             size = { width: 2, height: 2 };
-                            icon = '/ships/Stingray.png';
+                            icon = `${import.meta.env.BASE_URL}ships/Stingray.png`;
                         } else if (shipConfig.name === 'Leviathan') {
                             size = { width: 4, height: 2 };
-                            icon = '/ships/Dropship.png';
+                            icon = `${import.meta.env.BASE_URL}ships/Dropship.png`;
                         } else if (shipConfig.name === 'Harbinger Ship') {
                             size = { width: 3, height: 3 };
-                            icon = '/ships/harbinger.png';
+                            icon = `${import.meta.env.BASE_URL}ships/harbinger.png`;
                             setBossHealth(33); // 3x3 ship = 9 HP * 2 (Doubled) + 80% increase
                         }
 
@@ -660,14 +660,14 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
         } else {
             // Default ships if no config
             const defaultShips: Ship[] = [
-                { id: 'pelican-1-1', name: 'Pelican-1', size: { width: 2, height: 2 }, icon: '/ships/super-destroyer.png' },
-                { id: 'pelican-1-2', name: 'Pelican-1', size: { width: 2, height: 2 }, icon: '/ships/super-destroyer.png' },
-                { id: 'super-destroyer-1', name: 'Super Destroyer', size: { width: 4, height: 2 }, icon: '/ships/pelican-1.png' },
+                { id: 'pelican-1-1', name: 'Pelican-1', size: { width: 2, height: 2 }, icon: `${import.meta.env.BASE_URL}ships/super-destroyer.png` },
+                { id: 'pelican-1-2', name: 'Pelican-1', size: { width: 2, height: 2 }, icon: `${import.meta.env.BASE_URL}ships/super-destroyer.png` },
+                { id: 'super-destroyer-1', name: 'Super Destroyer', size: { width: 4, height: 2 }, icon: `${import.meta.env.BASE_URL}ships/pelican-1.png` },
             ];
             setAvailableShips(defaultShips);
             setAvailableStratagems([
-                { name: 'Orbital Laser', count: 2, icon: '/stratagems/orbital-laser.png' },
-                { name: 'Emergency Shield', count: 2, icon: '/icons/Emergency Shield.png' }
+                { name: 'Orbital Laser', count: 2, icon: `${import.meta.env.BASE_URL}stratagems/orbital-laser.png` },
+                { name: 'Emergency Shield', count: 2, icon: `${import.meta.env.BASE_URL}icons/Emergency Shield.png` }
             ]);
         }
     }, [missionConfig, gridSize]);

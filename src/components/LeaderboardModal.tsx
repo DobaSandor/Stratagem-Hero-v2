@@ -21,16 +21,16 @@ const BORDERS = [
     { id: 'gold', name: 'Gold', levelReq: 15, class: 'border-yellow-500' },
     { id: 'platinum', name: 'Platinum', levelReq: 20, class: 'border-cyan-400' },
     { id: 'diamond', name: 'Diamond', levelReq: 25, class: 'border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]' },
-    { id: 'n7', name: 'Spectre (N7)', class: 'border-transparent', levelReq: 0, secret: true, src: '/borders/n7.png' },
-    { id: 'exp33', name: 'EXP33', class: 'border-transparent', levelReq: 0, secret: true, src: '/borders/exp33.png' },
+    { id: 'n7', name: 'Spectre (N7)', class: 'border-transparent', levelReq: 0, secret: true, src: `${import.meta.env.BASE_URL}borders/n7.png` },
+    { id: 'exp33', name: 'EXP33', class: 'border-transparent', levelReq: 0, secret: true, src: `${import.meta.env.BASE_URL}borders/exp33.png` },
 ];
 
 const AVATARS = [
     { id: 'default', src: null },
-    { id: 'avatar_1', src: '/avatars/avatar_1.png' },
-    { id: 'avatar_2', src: '/avatars/avatar_2.png' },
-    { id: 'avatar_3', src: '/avatars/avatar_3.png' },
-    { id: 'avatar_4', src: '/avatars/avatar_4.png' },
+    { id: 'avatar_1', src: `${import.meta.env.BASE_URL}avatars/avatar_1.png` },
+    { id: 'avatar_2', src: `${import.meta.env.BASE_URL}avatars/avatar_2.png` },
+    { id: 'avatar_3', src: `${import.meta.env.BASE_URL}avatars/avatar_3.png` },
+    { id: 'avatar_4', src: `${import.meta.env.BASE_URL}avatars/avatar_4.png` },
 ];
 
 const LeaderboardModal: React.FC<LeaderboardModalProps> = ({

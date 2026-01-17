@@ -23,26 +23,26 @@ const BORDERS = [
     { id: 'gold', name: 'Gold', levelReq: 15, class: 'border-yellow-500' },
     { id: 'platinum', name: 'Platinum', levelReq: 20, class: 'border-cyan-400' },
     { id: 'diamond', name: 'Diamond', levelReq: 25, class: 'border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]' },
-    { id: 'n7', name: 'Spectre (N7)', class: 'border-transparent', levelReq: 0, secret: true, src: '/borders/n7.png' },
-    { id: 'exp33', name: 'EXP33', class: 'border-transparent', levelReq: 0, secret: true, src: '/borders/exp33.png' },
+    { id: 'n7', name: 'Spectre (N7)', class: 'border-transparent', levelReq: 0, secret: true, src: `${import.meta.env.BASE_URL}borders/n7.png` },
+    { id: 'exp33', name: 'EXP33', class: 'border-transparent', levelReq: 0, secret: true, src: `${import.meta.env.BASE_URL}borders/exp33.png` },
 ];
 
 const AVATARS = [
     { id: 'default', src: null, levelReq: 0 },
-    { id: 'avatar_1', src: '/avatars/avatar_1.png', levelReq: 0 },
-    { id: 'avatar_2', src: '/avatars/avatar_2.png', levelReq: 0 },
-    { id: 'avatar_3', src: '/avatars/avatar_3.png', levelReq: 0 },
-    { id: 'avatar_4', src: '/avatars/avatar_4.png', levelReq: 0 },
-    { id: 'level3', src: '/avatars/level3.png', levelReq: 3 },
-    { id: 'level5', src: '/avatars/level5.png', levelReq: 5 },
-    { id: 'level7', src: '/avatars/level7.png', levelReq: 7 },
-    { id: 'level10', src: '/avatars/level10.png', levelReq: 10 },
-    { id: 'level13', src: '/avatars/level13.png', levelReq: 13 },
-    { id: 'level15', src: '/avatars/level15.png', levelReq: 15 },
-    { id: 'level18', src: '/avatars/level18.png', levelReq: 18 },
-    { id: 'level20', src: '/avatars/level20.png', levelReq: 20 },
-    { id: 'level22', src: '/avatars/level22.png', levelReq: 22 },
-    { id: 'level25', src: '/avatars/level25.png', levelReq: 25 },
+    { id: 'avatar_1', src: `${import.meta.env.BASE_URL}avatars/avatar_1.png`, levelReq: 0 },
+    { id: 'avatar_2', src: `${import.meta.env.BASE_URL}avatars/avatar_2.png`, levelReq: 0 },
+    { id: 'avatar_3', src: `${import.meta.env.BASE_URL}avatars/avatar_3.png`, levelReq: 0 },
+    { id: 'avatar_4', src: `${import.meta.env.BASE_URL}avatars/avatar_4.png`, levelReq: 0 },
+    { id: 'level3', src: `${import.meta.env.BASE_URL}avatars/level3.png`, levelReq: 3 },
+    { id: 'level5', src: `${import.meta.env.BASE_URL}avatars/level5.png`, levelReq: 5 },
+    { id: 'level7', src: `${import.meta.env.BASE_URL}avatars/level7.png`, levelReq: 7 },
+    { id: 'level10', src: `${import.meta.env.BASE_URL}avatars/level10.png`, levelReq: 10 },
+    { id: 'level13', src: `${import.meta.env.BASE_URL}avatars/level13.png`, levelReq: 13 },
+    { id: 'level15', src: `${import.meta.env.BASE_URL}avatars/level15.png`, levelReq: 15 },
+    { id: 'level18', src: `${import.meta.env.BASE_URL}avatars/level18.png`, levelReq: 18 },
+    { id: 'level20', src: `${import.meta.env.BASE_URL}avatars/level20.png`, levelReq: 20 },
+    { id: 'level22', src: `${import.meta.env.BASE_URL}avatars/level22.png`, levelReq: 22 },
+    { id: 'level25', src: `${import.meta.env.BASE_URL}avatars/level25.png`, levelReq: 25 },
 ];
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ username, onClose, levelData, enableSpin, onToggleSpin, enableSpaceBg, onToggleSpaceBg }) => {
@@ -221,7 +221,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ username, onClose, levelDat
                 type: 'border',
                 id: 'n7',
                 name: 'Spectre Elite',
-                src: '/borders/n7.png'
+                src: `${import.meta.env.BASE_URL}borders/n7.png`
             });
 
         } else if (code === 'EXP33') {
@@ -257,7 +257,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ username, onClose, levelDat
                 type: 'border',
                 id: 'exp33',
                 name: 'EXP33',
-                src: '/borders/exp33.png'
+                src: `${import.meta.env.BASE_URL}borders/exp33.png`
             });
 
         } else {

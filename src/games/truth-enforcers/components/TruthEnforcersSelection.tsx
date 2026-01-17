@@ -19,7 +19,7 @@ const TruthEnforcersSelection: React.FC<TruthEnforcersSelectionProps> = ({ onSel
 
                 {/* Logo Background */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                    <img src="/truth_enforcers.png" alt="Truth Enforcers" className="w-2/3 opacity-10 object-contain grayscale" />
+                    <img src={`${import.meta.env.BASE_URL}truth_enforcers.png`} alt="Truth Enforcers" className="w-2/3 opacity-10 object-contain grayscale" />
                 </div>
 
                 <div className="relative z-10 flex flex-col items-center">
@@ -40,7 +40,7 @@ const TruthEnforcersSelection: React.FC<TruthEnforcersSelectionProps> = ({ onSel
                         >
                             <div className="w-64 h-64 mb-8 relative transition-transform duration-300 group-hover:scale-110">
                                 <img
-                                    src="/enforcer_endless.png"
+                                    src={`${import.meta.env.BASE_URL}enforcer_endless.png`}
                                     alt="Endless"
                                     className="w-full h-full object-contain drop-shadow-2xl"
                                 />
@@ -63,7 +63,7 @@ const TruthEnforcersSelection: React.FC<TruthEnforcersSelectionProps> = ({ onSel
                         >
                             <div className="w-64 h-64 mb-8 relative transition-transform duration-300 group-hover:scale-110">
                                 <img
-                                    src="/enforcer_campaign.png"
+                                    src={`${import.meta.env.BASE_URL}enforcer_campaign.png`}
                                     alt="Enforcer Campaign"
                                     className="w-full h-full object-contain drop-shadow-2xl"
                                 />

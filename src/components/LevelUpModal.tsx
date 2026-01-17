@@ -5,16 +5,16 @@ import type { LevelReward } from '../data/levelSystem';
 // Avatars mapping (Can be imported from ProfileModal or defined here/shared file)
 // For simplicity, defining mapping here matching ProfileModal to avoid circular deps if ProfileModal exports it
 const LEVEL_AVATARS: Record<number, string> = {
-    3: '/avatars/level3.png',
-    5: '/avatars/level5.png',
-    7: '/avatars/level7.png',
-    10: '/avatars/level10.png',
-    13: '/avatars/level13.png',
-    15: '/avatars/level15.png',
-    18: '/avatars/level18.png',
-    20: '/avatars/level20.png',
-    22: '/avatars/level22.png',
-    25: '/avatars/level25.png',
+    3: `${import.meta.env.BASE_URL}avatars/level3.png`,
+    5: `${import.meta.env.BASE_URL}avatars/level5.png`,
+    7: `${import.meta.env.BASE_URL}avatars/level7.png`,
+    10: `${import.meta.env.BASE_URL}avatars/level10.png`,
+    13: `${import.meta.env.BASE_URL}avatars/level13.png`,
+    15: `${import.meta.env.BASE_URL}avatars/level15.png`,
+    18: `${import.meta.env.BASE_URL}avatars/level18.png`,
+    20: `${import.meta.env.BASE_URL}avatars/level20.png`,
+    22: `${import.meta.env.BASE_URL}avatars/level22.png`,
+    25: `${import.meta.env.BASE_URL}avatars/level25.png`,
 };
 
 interface LevelUpModalProps {

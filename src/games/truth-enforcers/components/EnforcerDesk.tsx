@@ -319,7 +319,7 @@ const EnforcerDesk: React.FC<EnforcerDeskProps> = ({ day, totalNPCs, currentNPCI
             <GuideBook
                 isOpen={showGuideBook}
                 onClose={() => setShowGuideBook(false)}
-                logo="/seaf_logo.png"
+                logo={`${import.meta.env.BASE_URL}seaf_logo.png`}
                 title="Enforcer Protocol"
                 pages={[
                     {

@@ -19,7 +19,7 @@ export const DIFFICULTY_SETTINGS: Record<DifficultyLevel, DifficultyConfig> = {
         roundBonusBase: 20,
         roundBonusMultiplier: 10,
         description: 'Standard issue Stratagem Hero experience. (12s Round Time)',
-        icon: '/difficulty_classic.png',
+        icon: `${import.meta.env.BASE_URL}difficulty_classic.png`,
         color: 'text-blue-400'
     },
     'Mediocre': {
@@ -28,7 +28,7 @@ export const DIFFICULTY_SETTINGS: Record<DifficultyLevel, DifficultyConfig> = {
         roundBonusBase: 30,
         roundBonusMultiplier: 15,
         description: 'For those who need a little more challenge. Small penalty for missed inputs (12s Round Time)',
-        icon: '/difficulty_mediocre.png',
+        icon: `${import.meta.env.BASE_URL}difficulty_mediocre.png`,
         color: 'text-green-400'
     },
 
@@ -38,7 +38,7 @@ export const DIFFICULTY_SETTINGS: Record<DifficultyLevel, DifficultyConfig> = {
         roundBonusBase: 50,
         roundBonusMultiplier: 20,
         description: 'Only for the elite, Fast reflexes required. Huge penalty for missed inputs (10s Round Time)',
-        icon: '/difficulty_hardcore.png',
+        icon: `${import.meta.env.BASE_URL}difficulty_hardcore.png`,
         color: 'text-red-400'
     },
     'Permadeath': {
@@ -47,7 +47,7 @@ export const DIFFICULTY_SETTINGS: Record<DifficultyLevel, DifficultyConfig> = {
         roundBonusBase: 100,
         roundBonusMultiplier: 50,
         description: 'ONE LIFE. NO MERCY. No mistakes allowed, just like on the battlefield. (10s Round Time)',
-        icon: '/permadeath_icon.png',
+        icon: `${import.meta.env.BASE_URL}permadeath_icon.png`,
         color: 'text-red-600 animate-pulse'
     }
 };

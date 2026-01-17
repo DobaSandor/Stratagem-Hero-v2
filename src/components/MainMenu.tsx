@@ -55,7 +55,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
     useEffect(() => {
         // Initialize Audio
         if (!audioRef.current) {
-            audioRef.current = new Audio('/sounds/MainMenuMusic.mp3');
+            audioRef.current = new Audio(`${import.meta.env.BASE_URL}sounds/MainMenuMusic.mp3`);
             audioRef.current.loop = true;
         }
 
@@ -222,8 +222,8 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
         { id: 'gold', name: 'Gold', levelReq: 15, class: 'border-yellow-500' },
         { id: 'platinum', name: 'Platinum', levelReq: 20, class: 'border-cyan-400' },
         { id: 'diamond', name: 'Diamond', levelReq: 25, class: 'border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]' },
-        { id: 'n7', name: 'Spectre (N7)', class: 'border-transparent', levelReq: 0, secret: true, src: '/borders/n7.png' },
-        { id: 'exp33', name: 'EXP33', class: 'border-transparent', levelReq: 0, secret: true, src: '/borders/exp33.png' },
+        { id: 'n7', name: 'Spectre (N7)', class: 'border-transparent', levelReq: 0, secret: true, src: `${import.meta.env.BASE_URL}borders/n7.png` },
+        { id: 'exp33', name: 'EXP33', class: 'border-transparent', levelReq: 0, secret: true, src: `${import.meta.env.BASE_URL}borders/exp33.png` },
     ];
 
     return (
@@ -250,7 +250,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
 
                         <div className={`absolute inset-0 rounded-full bg-gray-900/80 backdrop-blur-sm flex items-center justify-center overflow-hidden transition-all duration-300 ${BORDERS.find(b => b.id === activeBorder)?.src ? '' : `border-4 ${BORDERS.find(b => b.id === activeBorder)?.class || 'border-gray-500 hover:border-yellow-400'}`}`}>
                             {avatarId && avatarId !== 'default' ? (
-                                <img src={`/avatars/${avatarId}.png`} alt="Avatar" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                                <img src={`${import.meta.env.BASE_URL}avatars/${avatarId}.png`} alt="Avatar" className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
                             ) : (
                                 <span className="text-4xl font-bold text-yellow-400 group-hover:scale-110 transition-transform">
                                     {username.charAt(0).toUpperCase()}
@@ -269,11 +269,11 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                     {/* Level Banner (Bottom Right) - Unclipped */}
                     <div className="absolute -bottom-4 -right-1 flex flex-col items-center drop-shadow-lg z-20 transition-transform group-hover:scale-110">
                         {/* Banner Body */}
-                        <div className="bg-gradient-to-b from-yellow-600 to-yellow-800 text-white text-xs font-bold w-6 h-5 flex items-center justify-center border-x border-t border-yellow-500 shadow-sm relative z-20">
+                        <div className="bg-linear-to-b from-yellow-600 to-yellow-800 text-white text-xs font-bold w-6 h-5 flex items-center justify-center border-x border-t border-yellow-500 shadow-sm relative z-20">
                             {levelData.level}
                         </div>
                         {/* Banner Tail */}
-                        <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[8px] border-l-transparent border-r-transparent border-t-yellow-800 relative z-10 -mt-[1px]"></div>
+                        <div className="w-0 h-0 border-l-12 border-r-12 border-t-8 border-l-transparent border-r-transparent border-t-yellow-800 relative z-10 -mt-px"></div>
                     </div>
 
                     {/* Tooltip/Full Name on Hover */}
@@ -672,7 +672,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                 )
             }
             {showGiftModal && currentGift && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-gray-900 border-2 border-indigo-500 rounded-lg p-8 w-full max-w-sm text-center shadow-[0_0_50px_rgba(99,102,241,0.3)] relative overflow-hidden animate-in zoom-in-95 duration-300">
                         {/* Background Shine */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
