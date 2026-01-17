@@ -2,6 +2,7 @@
   "name": "stratagem-hero",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://github.com/Stratagem-Hero-v2",
   "type": "module",
   "scripts": {
     "dev": "vite",
