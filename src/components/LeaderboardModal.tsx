@@ -117,7 +117,7 @@ const LeaderboardModal: React.FC<LeaderboardModalProps> = ({
                 <div className={`p-6 border-b border-gray-800 bg-gray-950/50 flex justify-between items-center`}>
                     <div className="flex items-center gap-4">
                         {theme === 'purple' ? (
-                            <img src="/trophy_purple.png" alt="Trophy" className="w-10 h-10 object-contain drop-shadow" />
+                            <img src={`${import.meta.env.BASE_URL}trophy_purple.png`} alt="Trophy" className="w-10 h-10 object-contain drop-shadow" />
                         ) : (
                             <span className="text-3xl">🏆</span>
                         )}

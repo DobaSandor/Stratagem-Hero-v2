@@ -20,7 +20,7 @@ const GameModeSelection: React.FC<GameModeSelectionProps> = ({ onSelectMode, onB
 
                 {/* Super Earth Logo Background */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                    <img src="/super_earth_logo.png" alt="Super Earth" className="w-2/3 opacity-30 object-contain" />
+                    <img src={`${import.meta.env.BASE_URL}super_earth_logo.png`} alt="Super Earth" className="w-2/3 opacity-30 object-contain" />
                 </div>
 
                 <div className="relative z-10 flex flex-col items-center">
@@ -37,7 +37,7 @@ const GameModeSelection: React.FC<GameModeSelectionProps> = ({ onSelectMode, onB
                         >
                             <div className="w-64 h-64 mb-8 relative transition-transform duration-300 group-hover:scale-110">
                                 <img
-                                    src="/mode_campaign.png"
+                                    src={`${import.meta.env.BASE_URL}mode_campaign.png`}
                                     alt="Endless Invasion"
                                     className="w-full h-full object-contain drop-shadow-2xl"
                                 />
@@ -60,7 +60,7 @@ const GameModeSelection: React.FC<GameModeSelectionProps> = ({ onSelectMode, onB
                         >
                             <div className="w-64 h-64 mb-8 relative transition-transform duration-300 group-hover:scale-110">
                                 <img
-                                    src="/mode_endless.png"
+                                    src={`${import.meta.env.BASE_URL}mode_endless.png`}
                                     alt="Campaign"
                                     className="w-full h-full object-contain drop-shadow-2xl"
                                 />
@@ -91,7 +91,7 @@ const GameModeSelection: React.FC<GameModeSelectionProps> = ({ onSelectMode, onB
                     >
                         <div className="w-10 h-10 relative">
                             <img
-                                src="/trophy_purple.png"
+                                src={`${import.meta.env.BASE_URL}trophy_purple.png`}
                                 alt="Leaderboard"
                                 className="w-full h-full object-contain filter drop-shadow-[0_0_5px_rgba(168,85,247,0.5)] group-hover:scale-110 transition-transform"
                             />

@@ -376,7 +376,7 @@ const GamePage: React.FC<GamePageProps> = ({ onBack, username }) => {
                                 className={`p-2 rounded-lg bg-${themeColor}-500/10 hover:bg-${themeColor}-500/20 text-${themeColor}-500 transition-colors border border-${themeColor}-500/30`}
                                 title="Leaderboard"
                             >
-                                <img src="/scoreboard_icon.png" alt="Leaderboard" className="h-12 w-12 object-contain" />
+                                <img src={`${import.meta.env.BASE_URL}scoreboard_icon.png`} alt="Leaderboard" className="h-12 w-12 object-contain" />
                             </button>
                             <button
                                 onClick={onBack}
@@ -409,7 +409,7 @@ const GamePage: React.FC<GamePageProps> = ({ onBack, username }) => {
                             {/* Super Earth Logo Background */}
                             {(gameState === 'round-won' || gameState === 'game-over') && (
                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                                    <img src="/super_earth_logo.png" alt="Super Earth" className="w-2/3 opacity-50 object-contain" />
+                                    <img src={`${import.meta.env.BASE_URL}super_earth_logo.png`} alt="Super Earth" className="w-2/3 opacity-50 object-contain" />
                                 </div>
                             )}
 

@@ -64,7 +64,7 @@ const DifficultySelection: React.FC<DifficultySelectionProps> = ({ onSelect, onB
 
             {/* Super Earth Logo Background */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                <img src="/super_earth_logo.png" alt="Super Earth" className="w-2/3 opacity-50 object-contain" />
+                <img src={`${import.meta.env.BASE_URL}super_earth_logo.png`} alt="Super Earth" className="w-2/3 opacity-50 object-contain" />
             </div>
 
             <div className="relative z-10 flex flex-col items-center">

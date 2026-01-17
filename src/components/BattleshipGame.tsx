@@ -1793,7 +1793,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                                 }}
                             >
                                 <img
-                                    src="/icons/radar_crosshair.png"
+                                    src={`${import.meta.env.BASE_URL}icons/radar_crosshair.png`}
                                     className="w-[120%] h-[120%] object-contain animate-[spin_4s_linear_infinite] drop-shadow-[0_0_8px_rgba(220,38,38,0.8)]"
                                 />
                             </motion.div>
@@ -2013,7 +2013,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                         <div className="flex justify-between w-full gap-4">
                             <span className="text-gray-400 uppercase tracking-wider">Credits</span>
                             <div className="flex items-center gap-1 text-blue-400 font-bold">
-                                {endlessCredits} <img src="/icons/super_credit.png" alt="SC" className="h-3 w-auto object-contain" />
+                                {endlessCredits} <img src={`${import.meta.env.BASE_URL}icons/super_credit.png`} alt="SC" className="h-3 w-auto object-contain" />
                             </div>
                         </div>
                     </div>
@@ -2149,13 +2149,13 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                             <div className="flex justify-between text-gray-300 text-lg border-b border-gray-700 pb-2">
                                 <span>Credits Earned</span>
                                 <div className="flex items-center gap-1 text-blue-400 font-mono">
-                                    +{currentWave * 50} <img src="/icons/super_credit.png" alt="SC" className="h-4 w-auto object-contain" />
+                                    +{currentWave * 50} <img src={`${import.meta.env.BASE_URL}icons/super_credit.png`} alt="SC" className="h-4 w-auto object-contain" />
                                 </div>
                             </div>
                             <div className="flex justify-between text-white text-xl font-bold pt-2">
                                 <span>Total Credits</span>
                                 <div className="flex items-center gap-1 text-blue-400 font-mono">
-                                    {endlessCredits} <img src="/icons/super_credit.png" alt="SC" className="h-5 w-auto object-contain" />
+                                    {endlessCredits} <img src={`${import.meta.env.BASE_URL}icons/super_credit.png`} alt="SC" className="h-5 w-auto object-contain" />
                                 </div>
                             </div>
                         </div>
@@ -2189,7 +2189,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                             <div className="flex flex-col items-end">
                                 <span className="text-gray-400 text-sm">Valid Credits</span>
                                 <div className="flex items-center gap-2 text-2xl font-mono text-yellow-400">
-                                    {endlessCredits} <img src="/icons/super_credit.png" alt="SC" className="h-8 w-auto object-contain" />
+                                    {endlessCredits} <img src={`${import.meta.env.BASE_URL}icons/super_credit.png`} alt="SC" className="h-8 w-auto object-contain" />
                                 </div>
                             </div>
                         </div>
@@ -2204,7 +2204,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
 
                                 <div className="flex items-center gap-4">
                                     <div className="w-16 h-16 bg-gray-800 rounded-lg border border-gray-700 flex items-center justify-center p-2">
-                                        <img src="/icons/ammo_upgrade.png" alt="Ammo Upgrade" className="w-full h-full object-contain" />
+                                        <img src={`${import.meta.env.BASE_URL}icons/ammo_upgrade.png`} alt="Ammo Upgrade" className="w-full h-full object-contain" />
                                     </div>
                                     <div>
                                         <h4 className="text-yellow-400 font-bold uppercase tracking-wider">Ammunition</h4>
@@ -2229,7 +2229,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                                             >
                                                 <span>Purchase</span>
                                                 <div className="flex items-center gap-1 text-xs bg-black/20 px-2 py-0.5 rounded">
-                                                    {AMMO_UPGRADES[ammoUpgradeLevel].cost} <img src="/icons/super_credit.png" alt="SC" className="h-3 w-auto" />
+                                                    {AMMO_UPGRADES[ammoUpgradeLevel].cost} <img src={`${import.meta.env.BASE_URL}icons/super_credit.png`} alt="SC" className="h-3 w-auto" />
                                                 </div>
                                             </button>
                                         </div>
@@ -2249,7 +2249,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
 
                                 <div className="flex items-center gap-4">
                                     <div className="w-16 h-16 bg-gray-800 rounded-lg border border-gray-700 flex items-center justify-center p-2">
-                                        <img src="/icons/reinforcement_upgrade.png" alt="Reinforcements" className="w-full h-full object-contain" />
+                                        <img src={`${import.meta.env.BASE_URL}icons/reinforcement_upgrade.png`} alt="Reinforcements" className="w-full h-full object-contain" />
                                     </div>
                                     <div>
                                         <h4 className="text-yellow-400 font-bold uppercase tracking-wider">Reinforcements</h4>
@@ -2278,7 +2278,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                                             >
                                                 <span>Purchase</span>
                                                 <div className="flex items-center gap-1 text-xs bg-black/20 px-2 py-0.5 rounded">
-                                                    {REINFORCEMENT_UPGRADES[reinforcementLevel].cost} <img src="/icons/super_credit.png" alt="SC" className="h-3 w-auto" />
+                                                    {REINFORCEMENT_UPGRADES[reinforcementLevel].cost} <img src={`${import.meta.env.BASE_URL}icons/super_credit.png`} alt="SC" className="h-3 w-auto" />
                                                 </div>
                                             </button>
                                         </div>

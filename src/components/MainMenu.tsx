@@ -181,7 +181,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
             color: 'purple' as const,
             icon: (
                 <img
-                    src="/illuminate_icon.png"
+                    src={`${import.meta.env.BASE_URL}illuminate_icon.png`}
                     alt="Illuminate"
                     className="w-16 h-16 object-contain opacity-80"
                     draggable={false}
@@ -196,7 +196,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
             color: 'red' as const,
             icon: (
                 <img
-                    src="/truth_enforcers.png"
+                    src={`${import.meta.env.BASE_URL}truth_enforcers.png`}
                     alt="Truth Enforcers"
                     className="w-16 h-16 object-contain opacity-80"
                     draggable={false}

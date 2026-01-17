@@ -298,7 +298,7 @@ const EnforcerDesk: React.FC<EnforcerDeskProps> = ({ day, totalNPCs, currentNPCI
 
                             {/* Paper Insert */}
                             <div className="absolute top-2 left-4 w-56 h-32 bg-gray-100 shadow-md flex flex-col items-center justify-center -rotate-1 p-4 text-center">
-                                <img src="/seaf_logo.png" className="w-16 h-16 opacity-30 mb-2" alt="" />
+                                <img src={`${import.meta.env.BASE_URL}seaf_logo.png`} className="w-16 h-16 opacity-30 mb-2" alt="" />
                                 <div className="h-2 w-full bg-gray-300 rounded mb-2"></div>
                                 <div className="h-2 w-3/4 bg-gray-300 rounded mb-2"></div>
                                 <div className="h-2 w-1/2 bg-gray-300 rounded"></div>

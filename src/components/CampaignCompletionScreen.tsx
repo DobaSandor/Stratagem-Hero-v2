@@ -17,7 +17,10 @@ const CampaignCompletionScreen: React.FC<CampaignCompletionScreenProps> = ({ onC
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 text-white font-sans overflow-hidden">
             {/* Background Effects */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-yellow-900/20 via-black to-black"></div>
-            <div className="absolute inset-0 bg-[url('/patterns/hex-grid.png')] opacity-10 animate-pulse"></div>
+            <div
+                className="absolute inset-0 opacity-10 animate-pulse"
+                style={{ backgroundImage: `url('${import.meta.env.BASE_URL}patterns/hex-grid.png')` }}
+            ></div>
 
             <div className={`relative z-10 flex flex-col items-center max-w-4xl p-8 text-center transition-all duration-1000 transform ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
 
@@ -52,11 +55,11 @@ const CampaignCompletionScreen: React.FC<CampaignCompletionScreenProps> = ({ onC
                         <div className="text-purple-400 text-xl font-bold">Purger of The Illuminite</div>
                     </div>
                 </div>
-                
+
                 <button
-                    onClick={onContinue} 
+                    onClick={onContinue}
                     className="px-12 py-4 bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-xl rounded-lg uppercase tracking-widest shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:shadow-[0_0_30px_rgba(234,179,8,0.6)] transition-all transform hover:scale-105 active:scale-95"
-                  >
+                >
                     Return to Fleet
                 </button>
             </div>

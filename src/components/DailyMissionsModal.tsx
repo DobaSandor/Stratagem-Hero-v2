@@ -86,7 +86,7 @@ const DailyMissionsModal: React.FC<DailyMissionsModalProps> = ({ username, onClo
                 <div className="bg-linear-to-r from-yellow-900/50 to-gray-900 p-6 border-b border-yellow-500/30 flex justify-between items-center relative overflow-hidden">
                     {/* Background Logo */}
                     <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-15 pointer-events-none">
-                        <img src="/super_earth_command_logo.png" alt="" className="h-32 w-32 object-contain" />
+                        <img src={`${import.meta.env.BASE_URL}super_earth_command_logo.png`} alt="" className="h-32 w-32 object-contain" />
                     </div>
 
                     <div className="relative z-10">
