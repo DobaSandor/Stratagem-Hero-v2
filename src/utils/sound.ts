@@ -12,7 +12,7 @@ const playSound = (path: string, volume: number = 1.0) => {
 
 const getRandomSound = (baseName: string, count: number) => {
     const index = Math.floor(Math.random() * count) + 1;
-    return `/sounds/${baseName}${index}.wav`;
+    return `${import.meta.env.BASE_URL}sounds/${baseName}${index}.wav`;
 };
 
 export const playInputSound = () => {
@@ -36,15 +36,15 @@ export const playRoundWonSound = () => {
 };
 
 export const playFailureSound = () => {
-    playSound('/sounds/failure.wav', 0.8);
+    playSound(`${import.meta.env.BASE_URL}sounds/failure.wav`, 0.8);
 };
 
 export const playStartSound = () => {
-    playSound('/sounds/start.wav', 0.8);
+    playSound(`${import.meta.env.BASE_URL}sounds/start.wav`, 0.8);
     // Play coin sound shortly after
     setTimeout(() => {
         const coin = Math.random() > 0.5 ? 'coin1.wav' : 'coin2.wav';
-        playSound(`/sounds/${coin}`, 0.7);
+        playSound(`${import.meta.env.BASE_URL}sounds/${coin}`, 0.7);
     }, 800);
 };
 
@@ -52,7 +52,7 @@ let bgmAudio: HTMLAudioElement | null = null;
 
 export const playBGM = () => {
     if (!bgmAudio) {
-        bgmAudio = new Audio('/sounds/stratagem_hero.wav');
+        bgmAudio = new Audio(`${import.meta.env.BASE_URL}sounds/stratagem_hero.wav`);
         bgmAudio.loop = true;
         bgmAudio.volume = 0.3; // Lower volume for background
     }
@@ -68,5 +68,5 @@ export const stopBGM = () => {
 };
 
 export const playCampaignSelectSound = () => {
-    playSound('/sounds/pickupCoin.wav', 0.8);
+    playSound(`${import.meta.env.BASE_URL}sounds/pickupCoin.wav`, 0.8);
 };
