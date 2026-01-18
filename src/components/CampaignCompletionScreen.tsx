@@ -19,7 +19,7 @@ const CampaignCompletionScreen: React.FC<CampaignCompletionScreenProps> = ({ onC
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-yellow-900/20 via-black to-black"></div>
             <div
                 className="absolute inset-0 opacity-10 animate-pulse"
-                style={{ backgroundImage: `url('${import.meta.env.BASE_URL}patterns/hex-grid.png')` }}
+                style={{ background: 'linear-gradient(to bottom right, #111827, #1f2937)' }}
             ></div>
 
             <div className={`relative z-10 flex flex-col items-center max-w-4xl p-8 text-center transition-all duration-1000 transform ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
