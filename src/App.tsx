@@ -61,7 +61,7 @@ function App() {
       setShowIntro(false);
     } else {
       if (stats.useDarkIntro) {
-        setIntroVideoSrc(`${import.meta.env.BASE_URL}Ministry of Defense Intro DARK.mp4`);
+        setIntroVideoSrc(`${import.meta.env.BASE_URL}Intro/Ministry of Defense Intro.mp4`);
       } else {
         setIntroVideoSrc(undefined); // Default
       }

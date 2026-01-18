@@ -160,7 +160,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
         // Player Stratagems (Reload per wave or carry over? Reload is easier for balance)
         const stratagems = [
             { name: 'Orbital Laser', count: 1 + Math.floor(wave / 5), icon: `${import.meta.env.BASE_URL}stratagems/orbital-laser.png` },
-            { name: 'Emergency Shield', count: 1, icon: `${import.meta.env.BASE_URL}icons/Emergency Shield.png` },
+            { name: 'Emergency Shield', count: 1, icon: `${import.meta.env.BASE_URL}icons/Emergency-Shield.png` },
             { name: 'Reinforce', count: 1, icon: `${import.meta.env.BASE_URL}stratagems/reinforce.png` } // Assuming this exists or generic
         ];
 
