@@ -1007,76 +1007,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ username, onClose, levelDat
                                     </button>
                                 </div>
 
-                                {/* Dev Tools - Temporary for Testing */}
-                                <div className="flex items-center justify-between p-4 bg-red-900/10 rounded-lg border border-red-900/30 mt-3">
-                                    <div>
-                                        <div className="text-red-400 font-bold text-sm">Reset EXP33 (Dev)</div>
-                                        <div className="text-red-500/50 text-xs text-left">Reset redemption status for testing.</div>
-                                    </div>
-                                    <button
-                                        onClick={async () => {
-                                            if (!stats) return;
-                                            const newStats = { ...stats };
-                                            newStats.unlockedCodes = newStats.unlockedCodes?.filter(c => c !== 'EXP33') || [];
-                                            newStats.unlockedBorders = newStats.unlockedBorders?.filter(b => b !== 'exp33') || [];
-                                            newStats.unlockedTitles = newStats.unlockedTitles?.filter(t => t !== 'Expeditioner') || [];
 
-                                            if (newStats.activeBorder === 'exp33') newStats.activeBorder = 'default';
-                                            if (newStats.activeTitle === 'Expeditioner') newStats.activeTitle = null;
-
-                                            setStats(newStats);
-                                            await db.updateUserStats(username, {
-                                                unlockedCodes: newStats.unlockedCodes,
-                                                unlockedBorders: newStats.unlockedBorders,
-                                                unlockedTitles: newStats.unlockedTitles,
-                                                activeBorder: newStats.activeBorder,
-                                                activeTitle: newStats.activeTitle
-                                            });
-                                            alert(`EXP33 Reset for ${username}. You can now redeem it again.`);
-                                        }}
-                                        className="px-3 py-1 bg-red-900/30 border border-red-700 text-red-400 rounded hover:bg-red-900/50 transition-colors text-xs font-mono uppercase"
-                                    >
-                                        Reset
-                                    </button>
-                                    <button
-                                        onClick={async () => {
-                                            const testUsers = ['Test', 'Test2', 'test3', 'Test4', 'Test5', 'Test6'];
-                                            if (confirm(`Reset EXP33 for: ${testUsers.join(', ')}?`)) {
-                                                for (const user of testUsers) {
-                                                    // This is a bit hacky as we are using client-side DB access for other users
-                                                    // ideally this should be an admin function, but for dev tool usage it's fine
-                                                    try {
-                                                        const userStats = await db.getUserStats(user);
-                                                        if (userStats) {
-                                                            const newStats = { ...userStats };
-                                                            newStats.unlockedCodes = newStats.unlockedCodes?.filter(c => c !== 'EXP33') || [];
-                                                            newStats.unlockedBorders = newStats.unlockedBorders?.filter(b => b !== 'exp33') || [];
-                                                            newStats.unlockedTitles = newStats.unlockedTitles?.filter(t => t !== 'Expeditioner') || [];
-
-                                                            if (newStats.activeBorder === 'exp33') newStats.activeBorder = 'default';
-                                                            if (newStats.activeTitle === 'Expeditioner') newStats.activeTitle = null;
-
-                                                            await db.updateUserStats(user, {
-                                                                unlockedCodes: newStats.unlockedCodes,
-                                                                unlockedBorders: newStats.unlockedBorders,
-                                                                unlockedTitles: newStats.unlockedTitles,
-                                                                activeBorder: newStats.activeBorder,
-                                                                activeTitle: newStats.activeTitle
-                                                            });
-                                                            console.log(`Reset complete for ${user}`);
-                                                        }
-                                                    } catch (e) {
-                                                        console.error(`Failed to reset ${user}`, e);
-                                                    }
-                                                }
-                                                alert('Bulk Reset Complete. Check console for details.');
-                                            }
-                                        }}
-                                        className="px-3 py-1 bg-red-900/30 border border-red-700 text-red-400 rounded hover:bg-red-900/50 transition-colors text-xs font-mono uppercase ml-2"
-                                    >
-                                        Reset Test Users
-                                    </button>
-                                </div>
 
                                 {/* Redeem Code Button */}
                                 <div className="mt-8 pt-4 border-t border-gray-800">
