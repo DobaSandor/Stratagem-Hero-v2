@@ -137,7 +137,7 @@ const GamePage: React.FC<GamePageProps> = ({ onBack, username }) => {
                 setIsPerfectRound(true); // Reset for next round
                 nextStratagem();
                 setGameState('playing');
-            }, 6000); // Increased time for animation
+            }, 2000); // Increased time for animation
             return () => clearTimeout(timeout);
         }
     }, [gameState]);

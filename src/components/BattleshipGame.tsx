@@ -45,7 +45,7 @@ interface BattleshipGameProps {
 
 // Constants
 const CONSUMABLES = [
-    { id: 'repair', name: 'Nano-Repair', icon: '🔧', cost: 500, desc: 'Restores 1 HP to a damaged ship.' },
+    { id: 'repair', name: 'Nano Repair', icon: `${import.meta.env.BASE_URL}stratagems/nano_repair.png`, cost: 50, desc: 'Repairs a chosen damaged ship tile. Limit 5 per wave.' },
     { id: 'cooldown', name: 'Rapid Cooldown', icon: '⚡', cost: 750, desc: 'Instantly reloads all Stratagems.' },
     { id: 'radar', name: 'Precise Radar', icon: `${import.meta.env.BASE_URL}icons/radar_upgrade.png`, cost: 100, desc: 'Reveals one enemy ship tile. Limit 3 per wave.' },
 ];
@@ -267,6 +267,10 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
     const [radarPing, setRadarPing] = useState<{ x: number, y: number } | null>(null);
     const [lastHit, setLastHit] = useState<{ x: number, y: number } | null>(null); // For AI hunting
 
+    // Nano Repair State
+    const [nanoRepairUsedCount, setNanoRepairUsedCount] = useState(0);
+    const [selectionMode, setSelectionMode] = useState<'none' | 'repair'>('none');
+
     // Save Score on Game Over
     useEffect(() => {
         if (mode === 'endless' && gameState === 'lost' && !scoreSavedRef.current) {
@@ -330,7 +334,42 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
         } else {
             // Placeholder for other items
             // Logic for repair/cooldown/etc would go here
-            if (item.id === 'repair' || item.id === 'cooldown') {
+            if (item.id === 'repair') {
+                if (nanoRepairUsedCount >= 5) {
+                    setAlertMessage("LIMIT REACHED (5/5)");
+                    setTimeout(() => setAlertMessage(null), 2000);
+                    return;
+                }
+
+                // Check for damaged ships (Validation)
+                let hasDamage = false;
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        if (playerGrid[y][x].status === 'hit') {
+                            hasDamage = true;
+                            break;
+                        }
+                    }
+                    if (hasDamage) break;
+                }
+
+                if (!hasDamage) {
+                    setAlertMessage("SYSTEMS OPTIMAL: NO REPAIRS NEEDED");
+                    setTimeout(() => setAlertMessage(null), 2000);
+                    return;
+                }
+
+                // Activate Selection Mode
+                setSelectionMode('repair');
+                setShowDatapad(false);
+                setAlertMessage("SELECT DAMAGED SHIP TILE TO REPAIR");
+                // Note: Credit deduction happens ON USE, not on click of button, or we deduct here and refund if cancel?
+                // Plan says: "Deduct 50 Credits... Start Repair: Set cell status... Deduct..." in handleCellClick. 
+                // Wait, if I deduct here, I need to handle cancel.
+                // Better to deduct on successful repair.
+                // But generally buying implies spending.
+                // Let's deduct on successful repair to avoid complex refund logic if they change mind or misclick.
+            } else if (item.id === 'cooldown') {
                 // For now, just deduct credits to simulate purchase
                 setEndlessCredits(prev => prev - item.cost);
                 setShowDatapad(false); // Close modal on purchase
@@ -430,6 +469,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
         setShowEndlessWaveComplete(false);
         setCurrentWave(prev => prev + 1);
         setGameState('setup');
+        setNanoRepairUsedCount(0); // Reset repair limit
     };
 
     const handlePostDialogueComplete = () => {
@@ -514,6 +554,8 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
         setAlertMessage(null);
         setBossHealth(0);
         setWarpEffect(null);
+        setNanoRepairUsedCount(0);
+        setSelectionMode('none');
 
         // Initialize Dialogue
         if (missionConfig?.dialogue && missionConfig.dialogue.length > 0) {
@@ -986,7 +1028,35 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
     };
 
     const handleCellClick = (x: number, y: number, isEnemy: boolean) => {
-        if (gameState !== 'playing' || currentTurn !== 'player') return;
+        // 1. Handle Repair Mode (Allowed in 'setup' and 'playing')
+        if (selectionMode === 'repair') {
+            // Only interactions on Player Grid are valid for repair
+            if (!isEnemy) {
+                if (playerGrid[y][x].status === 'hit') {
+                    // Valid Repair Target
+                    const newPlayerGrid = playerGrid.map(row => row.map(cell => ({ ...cell })));
+                    newPlayerGrid[y][x].status = 'ship'; // Restore to ship
+                    setPlayerGrid(newPlayerGrid);
+
+                    setEndlessCredits(prev => prev - 50);
+                    setNanoRepairUsedCount(prev => prev + 1);
+                    setSelectionMode('none');
+
+                    setAlertMessage("SYSTEMS REPAIRED");
+                    setTimeout(() => setAlertMessage(null), 1500);
+                } else {
+                    setAlertMessage("INVALID TARGET: SELECT DAMAGED SHIP");
+                    setTimeout(() => setAlertMessage(null), 1500);
+                }
+            }
+            // Always return if in repair mode to prevent accidental shooting/interaction
+            return;
+        }
+
+        // 2. Standard Gameplay Restrictions
+        // If not in repair mode, interactions are ONLY allowed during 'playing' state
+        if (gameState !== 'playing') return;
+        if (currentTurn !== 'player') return;
 
         if (isEnemy) {
             // Player attacking enemy
@@ -1484,7 +1554,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                 <div
                     onDragLeave={!isEnemy ? handleDragLeave : undefined}
                     className={`grid gap-1 p-2 rounded-lg border-2 relative aspect-square w-full max-w-[65vh] ${isEnemy ? 'bg-red-950/30 border-red-900/50' : 'bg-blue-950/30 border-blue-900/50'
-                        } ${isEnemy && currentTurn === 'player' && gameState === 'playing' ? 'cursor-crosshair' : ''}`}
+                        } ${(isEnemy && currentTurn === 'player' && gameState === 'playing') || (!isEnemy && selectionMode === 'repair') ? 'cursor-crosshair' : ''}`}
                     style={{
                         gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
                         gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))`
@@ -1572,7 +1642,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                                             : undefined
                                     }
                                     className={`
-                                        w-full h-full border border-opacity-20 flex items-center justify-center transition-all duration-200 relative overflow-hidden
+                                        w-full h-full border border-opacity-20 flex items-center justify-center transition-all duration-200 relative overflow-hidden z-10
                                         ${isEnemy ? 'border-red-500 hover:bg-red-500/20' : 'border-blue-500'}
                                         ${cell.status === 'empty' && !isPreview ? 'bg-transparent' : ''}
                                         ${cell.status === 'hit' ? 'bg-red-500/50' : ''}
@@ -1582,6 +1652,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                                         ${cell.isShielded ? 'border-yellow-400 border-2 shadow-[0_0_10px_rgba(250,204,21,0.5)]' : ''}
                                         ${cell.impactType === 'blackhole' ? 'shadow-[inset_0_0_10px_rgba(147,51,234,0.8)] border-purple-500/80 bg-purple-900/40!' : ''}
                                         ${cell.impactType === 'orbital-laser' ? 'bg-gray-900 border-orange-900 shadow-[inset_0_0_15px_rgba(255,69,0,0.6)]' : ''}
+                                        ${!isEnemy && selectionMode === 'repair' && cell.status === 'hit' ? 'hover:bg-green-500/50 hover:border-green-400 cursor-alias animate-pulse z-50' : ''}
                                     `}
                                 >
                                     {/* Shield Effect */}
@@ -2083,11 +2154,16 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                 )}
             </div>
 
+            {/* Repair Mode Overlay - Darkens everything except the player grid */}
+            {selectionMode === 'repair' && (
+                <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-all duration-500 animate-in fade-in" />
+            )}
+
             {/* Main Game Area */}
-            <div className="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8 w-full h-full min-h-0">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8 w-full h-full min-h-0 relative">
 
                 {/* Left Panel: Enemy Grid */}
-                <div className="flex flex-col items-center justify-start gap-4 h-full w-full lg:w-auto flex-1">
+                <div className={`flex flex-col items-center justify-start gap-4 h-full w-full lg:w-auto flex-1 transition-opacity duration-300 ${selectionMode === 'repair' ? 'opacity-20 pointer-events-none' : ''}`}>
                     {/* Boss Health Bar */}
                     {missionConfig?.id === 10 && (
                         <div className="w-full max-w-[65vh] mb-2">
@@ -2113,13 +2189,13 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                 </div>
 
                 {/* Center Panel: Controls (Desktop Only) */}
-                <div className="hidden lg:flex flex-col gap-4 h-full w-full max-w-md py-4">
+                <div className={`hidden lg:flex flex-col gap-4 h-full w-full max-w-md py-4 transition-opacity duration-300 ${selectionMode === 'repair' ? 'opacity-20 pointer-events-none' : ''}`}>
                     {renderStratagemPanel()}
                     {renderReinforcementPanel()}
                 </div>
 
                 {/* Right Panel: Player Grid */}
-                <div className="flex flex-col items-center justify-start gap-4 h-full w-full lg:w-auto flex-1">
+                <div className={`flex flex-col items-center justify-start gap-4 h-full w-full lg:w-auto flex-1 transition-all duration-500 ${selectionMode === 'repair' ? 'relative z-50 scale-105 drop-shadow-[0_0_50px_rgba(34,197,94,0.3)]' : ''}`}>
                     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 shrink-0 w-full flex justify-center h-full max-h-[65vh]">
                         {renderGrid(playerGrid, false)}
                     </div>

@@ -564,7 +564,7 @@ export const db = {
                     .eq('difficulty', difficulty)
                     .neq('username', 'admin') // Filter admin from Supabase
                     .order('score', { ascending: false })
-                    .limit(10);
+                    .limit(50); // Fetch more to ensure we find unique users
 
                 if (!error && data) {
                     scores = data as ScoreEntry[];
@@ -576,16 +576,28 @@ export const db = {
             }
         }
 
-        // 2. Fallback to Local Storage if Supabase failed or returned empty (optional strategy, but here we prioritize Cloud)
+        // 2. Fallback to Local Storage if Supabase failed or returned empty
         if (scores.length === 0) {
             const localScores = db.getLocalScores();
             scores = localScores
                 .filter(s => s.difficulty === difficulty && s.username !== 'admin')
-                .sort((a, b) => b.score - a.score)
-                .slice(0, 10);
+                .sort((a, b) => b.score - a.score);
         }
 
-        // 3. Enrich with User metadata
+        // 3. Deduplicate (Keep highest score per user)
+        const uniqueScoresMap = new Map<string, ScoreEntry>();
+        for (const score of scores) {
+            if (!uniqueScoresMap.has(score.username)) {
+                uniqueScoresMap.set(score.username, score);
+            }
+        }
+
+        // Convert back to array, sort (just in case), and take top 10
+        scores = Array.from(uniqueScoresMap.values())
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 10);
+
+        // 4. Enrich with User metadata
         const { getRankForLevel } = await import('../data/levelSystem');
         const enrichedScores: ScoreEntry[] = [];
 
