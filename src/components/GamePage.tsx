@@ -44,6 +44,8 @@ const GamePage: React.FC<GamePageProps> = ({ onBack, username }) => {
         perfectBonus: 0,
         totalRoundScore: 0
     });
+    const [medalsEarned, setMedalsEarned] = useState(0);
+    const [roundsForNextMedal, setRoundsForNextMedal] = useState(0);
 
     // Session Stats
     const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
@@ -98,13 +100,32 @@ const GamePage: React.FC<GamePageProps> = ({ onBack, username }) => {
                     await db.addXP(username, xpAmount);
                 }
 
-                // Update Stats (Time Played & Stratagems)
+                // Calculate Medals
+                // Easy: 1/10, Classic: 1/5, Hardcore: 1/4, Permadeath: 1/3
+                let medals = 0;
+                let roundsPerMedal = 10;
+                if (difficulty === 'Classic') roundsPerMedal = 5;
+                if (difficulty === 'Hardcore') roundsPerMedal = 4;
+                if (difficulty === 'Permadeath') roundsPerMedal = 3;
+
+                const completedRounds = Math.max(0, round - 1);
+
+                // Permadeath no longer has multiplier, just lower threshold (1/3)
+                medals = Math.floor(completedRounds / roundsPerMedal);
+                const nextMedalAt = (Math.floor(completedRounds / roundsPerMedal) + 1) * roundsPerMedal;
+                const roundsNeeded = nextMedalAt - completedRounds;
+
+                setMedalsEarned(medals);
+                setRoundsForNextMedal(roundsNeeded);
+
+                // Update Stats
                 if (sessionStartTime) {
                     const durationSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
                     await db.incrementUserStats(username, {
                         time: durationSeconds,
                         stratagems: stratagemsCompletedTotal,
-                        missedInputs: sessionMissedInputs
+                        missedInputs: sessionMissedInputs,
+                        medals: medals
                     });
                 }
 
@@ -211,7 +232,9 @@ const GamePage: React.FC<GamePageProps> = ({ onBack, username }) => {
                 const points = (currentStratagem.sequence.length * 5); // Base points for stratagem (Reduced from 10)
 
                 setScore((prev) => prev + points);
-                setTimeLeft((prev) => prev + bonusTime);
+                // Cap time at max round time
+                const maxTime = DIFFICULTY_SETTINGS[difficulty].roundTime;
+                setTimeLeft((prev) => Math.min(maxTime, prev + bonusTime));
                 setStratagemsCompletedTotal(prev => prev + 1);
 
                 const requiredForRound = round + 2;
@@ -237,7 +260,8 @@ const GamePage: React.FC<GamePageProps> = ({ onBack, username }) => {
                     }
 
                     setScore((prev) => prev + totalRoundScore);
-                    setTimeLeft((prev) => prev + 5); // Round completion time bonus for next round
+                    const maxTime = DIFFICULTY_SETTINGS[difficulty].roundTime;
+                    setTimeLeft((prev) => Math.min(maxTime, prev + 5)); // Round completion time bonus
                     playRoundWonSound();
                     setGameState('round-won');
                 } else {
@@ -510,6 +534,21 @@ const GamePage: React.FC<GamePageProps> = ({ onBack, username }) => {
                                         <p className="text-sm text-blue-400 font-mono mt-2">
                                             XP Gained: +{Math.floor(score * GAME_XP_RATES.STRATAGEM_HERO.PER_POINT)}
                                         </p>
+                                        {medalsEarned > 0 ? (
+                                            <div className="flex flex-col items-center gap-1 mt-4 animate-bounce">
+                                                <div className="flex items-center gap-2 text-yellow-500 text-xl font-bold">
+                                                    <img src={`${import.meta.env.BASE_URL}icons/medals.png`} alt="Medals" className="w-8 h-8 object-contain" />
+                                                    <span>+{medalsEarned} Medals</span>
+                                                </div>
+                                                <p className="text-xs text-gray-500">
+                                                    {roundsForNextMedal} more rounds for next drop
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <p className="text-xs text-gray-600 mt-2">
+                                                {roundsForNextMedal} more rounds for a Medal
+                                            </p>
+                                        )}
                                     </div>
                                     <button
                                         onClick={() => setGameState('ready')}

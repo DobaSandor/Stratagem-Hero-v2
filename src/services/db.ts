@@ -62,6 +62,7 @@ export interface UserStats {
     };
     unlockedBorders?: string[];
     unlockedCodes?: string[];
+    medals?: number;
 }
 
 export interface FriendshipData {
@@ -194,7 +195,8 @@ export const db = {
                         truth_enforcers: localStats.truthEnforcers,
                         enable_spin: localStats.enableSpin,
                         unlocked_borders: localStats.unlockedBorders,
-                        unlocked_codes: localStats.unlockedCodes
+                        unlocked_codes: localStats.unlockedCodes,
+                        medals: localStats.medals || 0
                     };
                     await supabase.from('user_stats').insert([dbStats]);
                 } else {
@@ -830,7 +832,8 @@ export const db = {
             unlockedTitles: [],
             activeTitle: null,
             unlockedBorders: [],
-            unlockedCodes: []
+            unlockedCodes: [],
+            medals: 0
         };
 
         let fromSupabase = false;
@@ -873,7 +876,8 @@ export const db = {
                         useExpeditionBackground: local.useExpeditionBackground ?? data.use_expedition_background ?? false,
                         illuminate: data.illuminate || local.illuminate || { highScore: 0, credits: 0, inventory: [] },
                         unlockedBorders: Array.from(new Set([...(data.unlocked_borders || []), ...(local.unlockedBorders || [])])),
-                        unlockedCodes: Array.from(new Set([...(data.unlocked_codes || []), ...(local.unlockedCodes || [])]))
+                        unlockedCodes: Array.from(new Set([...(data.unlocked_codes || []), ...(local.unlockedCodes || [])])),
+                        medals: data.medals || local.medals || 0
                     };
                 }
             } catch (e) {
@@ -913,7 +917,8 @@ export const db = {
                     enable_spin: stats.enableSpin,
                     enable_space_bg: stats.enableSpaceBg,
                     unlocked_borders: stats.unlockedBorders,
-                    unlocked_codes: stats.unlockedCodes
+                    unlocked_codes: stats.unlockedCodes,
+                    medals: stats.medals || 0
                 }, { onConflict: 'username' });
             }
 
@@ -955,6 +960,7 @@ export const db = {
             if (updates.illuminate !== undefined) updatePayload.illuminate = updates.illuminate;
             if (updates.unlockedBorders !== undefined) updatePayload.unlocked_borders = updates.unlockedBorders;
             if (updates.unlockedCodes !== undefined) updatePayload.unlocked_codes = updates.unlockedCodes;
+            if (updates.medals !== undefined) updatePayload.medals = updates.medals;
 
             if (Object.keys(updatePayload).length > 0) {
                 await supabase
@@ -984,7 +990,7 @@ export const db = {
         }
     },
 
-    incrementUserStats: async (username: string, delta: { time?: number, stratagems?: number, missedInputs?: number }) => {
+    incrementUserStats: async (username: string, delta: { time?: number, stratagems?: number, missedInputs?: number, medals?: number }) => {
         const current = await db.getUserStats(username);
         const newStats = {
             totalTimePlayed: current.totalTimePlayed + (delta.time || 0),
@@ -994,7 +1000,8 @@ export const db = {
             avatarId: current.avatarId,
             unlockedTitles: current.unlockedTitles,
             activeTitle: current.activeTitle,
-            dailyMissions: current.dailyMissions
+            dailyMissions: current.dailyMissions,
+            medals: (current.medals || 0) + (delta.medals || 0)
         };
 
         // Save Supabase
@@ -1007,7 +1014,8 @@ export const db = {
                 active_border: newStats.activeBorder,
                 avatar_id: newStats.avatarId,
                 unlocked_titles: newStats.unlockedTitles,
-                active_title: newStats.activeTitle
+                active_title: newStats.activeTitle,
+                medals: newStats.medals
             }, { onConflict: 'username' });
         }
 

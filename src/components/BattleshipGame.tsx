@@ -440,6 +440,13 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                         });
                     });
 
+                    // Medal Reward (Wave > 6)
+                    if (currentWave > 6) {
+                        db.incrementUserStats(username, { medals: 1 });
+                        setAlertMessage("MEDAL ACQUIRED");
+                        setTimeout(() => setAlertMessage(null), 3000);
+                    }
+
                     setShowEndlessWaveComplete(true);
                 }
                 return;
@@ -1548,12 +1555,12 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
     const renderGrid = (grid: Cell[][], isEnemy: boolean) => {
         return (
             <div className="flex flex-col items-center space-y-2 relative w-full h-full">
-                <h3 className={`text-lg md:text-xl font-bold uppercase tracking-widest ${isEnemy ? 'text-red-500' : 'text-blue-500'}`}>
-                    {isEnemy ? 'Enemy Fleet' : 'Helldiver Fleet'}
+                <h3 className={`text-lg md:text-xl font-bold uppercase tracking-widest ${isEnemy ? 'text-purple-500' : 'text-blue-500'}`}>
+                    {isEnemy ? 'Enemy Fleet (Illuminite)' : 'Helldiver Fleet'}
                 </h3>
                 <div
                     onDragLeave={!isEnemy ? handleDragLeave : undefined}
-                    className={`grid gap-1 p-2 rounded-lg border-2 relative aspect-square w-full max-w-[65vh] ${isEnemy ? 'bg-red-950/30 border-red-900/50' : 'bg-blue-950/30 border-blue-900/50'
+                    className={`grid gap-1 p-2 rounded-lg border-2 relative aspect-square w-full max-w-[65vh] ${isEnemy ? 'bg-purple-950/30 border-purple-900/50' : 'bg-blue-950/30 border-blue-900/50'
                         } ${(isEnemy && currentTurn === 'player' && gameState === 'playing') || (!isEnemy && selectionMode === 'repair') ? 'cursor-crosshair' : ''}`}
                     style={{
                         gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
@@ -1643,9 +1650,9 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                                     }
                                     className={`
                                         w-full h-full border border-opacity-20 flex items-center justify-center transition-all duration-200 relative overflow-hidden z-10
-                                        ${isEnemy ? 'border-red-500 hover:bg-red-500/20' : 'border-blue-500'}
+                                        ${isEnemy ? 'border-purple-500 hover:bg-purple-500/20' : 'border-blue-500'}
                                         ${cell.status === 'empty' && !isPreview ? 'bg-transparent' : ''}
-                                        ${cell.status === 'hit' ? 'bg-red-500/50' : ''}
+                                        ${cell.status === 'hit' ? 'bg-purple-600/50' : ''}
                                         ${cell.status === 'miss' ? 'bg-gray-500/50' : ''}
                                         ${!isEnemy && cell.status === 'ship' ? 'bg-blue-500/20' : ''} 
                                         ${isPreview ? (isValidPreview ? 'bg-yellow-500/40' : 'bg-red-500/60') : ''}
@@ -2139,7 +2146,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                 )}
                 {gameState === 'playing' && (
                     <div className="text-2xl font-bold uppercase tracking-widest animate-pulse">
-                        {currentTurn === 'player' ? <span className="text-blue-400">Your Turn</span> : <span className="text-red-500">Enemy Turn</span>}
+                        {currentTurn === 'player' ? <span className="text-blue-400">Your Turn</span> : <span className="text-purple-500">Enemy Turn</span>}
                     </div>
                 )}
                 {gameState === 'won' && (

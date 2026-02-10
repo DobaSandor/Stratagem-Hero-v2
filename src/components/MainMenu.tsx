@@ -7,6 +7,7 @@ import DailyMissionsModal from './DailyMissionsModal';
 import StarryBackground from './StarryBackground';
 import { MISSION_POOL } from '../data/dailyMissions';
 import type { UserMission } from '../data/dailyMissions';
+import { playCompletionSound } from '../utils/sound';
 
 interface MainMenuProps {
     username: string;
@@ -34,6 +35,9 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
     const [gifts, setGifts] = useState<{ id: string; fromUsername: string; xpAmount: number }[]>([]);
     const [showGiftModal, setShowGiftModal] = useState(false);
     const [currentGift, setCurrentGift] = useState<{ id: string; fromUsername: string; xpAmount: number } | null>(null);
+    const [medals, setMedals] = useState(0);
+    const [flyingMedals, setFlyingMedals] = useState<{ id: number; x: number; y: number }[]>([]);
+    const [floatingTexts, setFloatingTexts] = useState<{ id: number; x: number; y: number }[]>([]);
 
     // Drag / Spin State
     const [isDragging, setIsDragging] = useState(false);
@@ -51,6 +55,24 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
     const [isMuted, setIsMuted] = useState(() => {
         return localStorage.getItem('stratagem_hero_bgm_muted') === 'true';
     });
+
+    const triggerMedalAnimation = (startX: number, startY: number) => {
+        const id = Date.now();
+        setFlyingMedals(prev => [...prev, { id, x: startX, y: startY }]);
+        setFloatingTexts(prev => [...prev, { id, x: startX, y: startY }]);
+
+        // Remove text after 1s
+        setTimeout(() => {
+            setFloatingTexts(prev => prev.filter(t => t.id !== id));
+        }, 1000);
+
+        // Remove medal after animation (1s) and update count
+        setTimeout(() => {
+            setFlyingMedals(prev => prev.filter(m => m.id !== id));
+            setMedals(prev => prev + 2); // Visual update to match the DB increment
+            playCompletionSound(); // Or a specific coin sound if available
+        }, 1000);
+    };
 
     useEffect(() => {
         // Initialize Audio
@@ -134,6 +156,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
         setEnableSpaceBg(stats.enableSpaceBg || false);
         setEnableExpeditionBg(stats.useExpeditionBackground || false);
         setEnableSpin(stats.enableSpin ?? false);
+        setMedals(stats.medals || 0);
 
         // Initialize Daily Missions
         const dailyMissions = await db.getDailyMissions(username);
@@ -368,6 +391,12 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                         )}
                     </div>
                 </button>
+            </div>
+
+            {/* Medals Display (Top Left, to the right of User Icon) */}
+            <div className="absolute top-6 left-28 z-50 flex items-center gap-2 bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-full border border-yellow-500/30 shadow-lg animate-in slide-in-from-left duration-700">
+                <img src={`${import.meta.env.BASE_URL}icons/medals.png`} alt="Medals" className="w-6 h-6 object-contain" />
+                <span className="text-yellow-400 font-bold text-lg">{medals}</span>
             </div>
 
             {/* Daily Missions Button */}
@@ -668,54 +697,57 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                             }, 300); // Match animation duration
                         }}
                         isClosing={isClosingMissions}
+                        onClaimReward={triggerMedalAnimation}
                     />
                 )
             }
-            {showGiftModal && currentGift && (
-                <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-gray-900 border-2 border-indigo-500 rounded-lg p-8 w-full max-w-sm text-center shadow-[0_0_50px_rgba(99,102,241,0.3)] relative overflow-hidden animate-in zoom-in-95 duration-300">
-                        {/* Background Shine */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
+            {
+                showGiftModal && currentGift && (
+                    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                        <div className="bg-gray-900 border-2 border-indigo-500 rounded-lg p-8 w-full max-w-sm text-center shadow-[0_0_50px_rgba(99,102,241,0.3)] relative overflow-hidden animate-in zoom-in-95 duration-300">
+                            {/* Background Shine */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
 
-                        <div className="relative z-10">
-                            <h3 className="text-indigo-400 text-sm font-bold uppercase tracking-widest mb-4">Supply Drop Received</h3>
+                            <div className="relative z-10">
+                                <h3 className="text-indigo-400 text-sm font-bold uppercase tracking-widest mb-4">Supply Drop Received</h3>
 
-                            <div className="mb-6">
-                                <div className="text-gray-300 text-sm mb-2">From Operative</div>
-                                <div className="text-2xl font-bold text-white mb-4">{currentGift.fromUsername}</div>
+                                <div className="mb-6">
+                                    <div className="text-gray-300 text-sm mb-2">From Operative</div>
+                                    <div className="text-2xl font-bold text-white mb-4">{currentGift.fromUsername}</div>
 
-                                <div className="bg-gray-800/50 rounded-lg p-4 border border-indigo-500/30">
-                                    <div className="text-4xl font-black text-yellow-400 drop-shadow-md mb-1">+{currentGift.xpAmount} XP</div>
-                                    <div className="text-xs text-indigo-300 uppercase tracking-wider">Friendship Bonus Applied</div>
+                                    <div className="bg-gray-800/50 rounded-lg p-4 border border-indigo-500/30">
+                                        <div className="text-4xl font-black text-yellow-400 drop-shadow-md mb-1">+{currentGift.xpAmount} XP</div>
+                                        <div className="text-xs text-indigo-300 uppercase tracking-wider">Friendship Bonus Applied</div>
+                                    </div>
                                 </div>
+
+                                <button
+                                    onClick={async () => {
+                                        if (!currentGift) return;
+                                        await db.claimGift(username, currentGift.id);
+
+                                        // Slide out logic? For now just close/next
+                                        // Check next gift
+                                        const nextGifts = gifts.filter(g => g.id !== currentGift.id);
+                                        setGifts(nextGifts);
+
+                                        if (nextGifts.length > 0) {
+                                            setCurrentGift(nextGifts[0]); // Show next immediately
+                                        } else {
+                                            setShowGiftModal(false);
+                                            setCurrentGift(null);
+                                            refreshUserData(); // Update XP bar
+                                        }
+                                    }}
+                                    className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded uppercase tracking-wider transition-all hover:scale-105 shadow-lg"
+                                >
+                                    Claim Supplies
+                                </button>
                             </div>
-
-                            <button
-                                onClick={async () => {
-                                    if (!currentGift) return;
-                                    await db.claimGift(username, currentGift.id);
-
-                                    // Slide out logic? For now just close/next
-                                    // Check next gift
-                                    const nextGifts = gifts.filter(g => g.id !== currentGift.id);
-                                    setGifts(nextGifts);
-
-                                    if (nextGifts.length > 0) {
-                                        setCurrentGift(nextGifts[0]); // Show next immediately
-                                    } else {
-                                        setShowGiftModal(false);
-                                        setCurrentGift(null);
-                                        refreshUserData(); // Update XP bar
-                                    }
-                                }}
-                                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded uppercase tracking-wider transition-all hover:scale-105 shadow-lg"
-                            >
-                                Claim Supplies
-                            </button>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
             {/* Audio Controls */}
             <div className="absolute bottom-4 left-4 z-50 flex items-center gap-3 bg-gray-900/80 backdrop-blur-md px-3 py-2 rounded-lg border border-gray-700 hover:border-gray-500 transition-colors animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <button
@@ -747,7 +779,77 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                     title={`Volume: ${Math.round(volume * 100)}%`}
                 />
             </div>
-        </div>
+
+            {/* Item Shop Button (Bottom Left, above Audio Controls) */}
+            <div className="absolute bottom-20 left-4 z-50 animate-in slide-in-from-bottom-8 duration-700">
+                <button
+                    className="group relative flex items-center gap-3 bg-gray-900/80 backdrop-blur-md px-4 py-3 rounded-xl border border-yellow-500/30 hover:border-yellow-500 transition-all duration-300 hover:scale-105 shadow-[0_0_15px_rgba(234,179,8,0.1)] hover:shadow-[0_0_25px_rgba(234,179,8,0.3)]"
+                    onClick={() => {
+                        // Placeholder for now
+                        alert("Item Shop Under Construction!\nUse your Medals designed for Democracy here soon.");
+                    }}
+                >
+                    <div className="relative w-8 h-8 flex items-center justify-center bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                        </svg>
+                    </div>
+                    <div className="text-left">
+                        <div className="text-xs text-yellow-500 font-bold uppercase tracking-widest">Item Shop</div>
+                        <div className="text-[10px] text-gray-400">Spend Medals</div>
+                    </div>
+                </button>
+            </div>
+
+            {/* Flying Medals Layer */}
+            {flyingMedals.map(medal => (
+                <div
+                    key={medal.id}
+                    className="fixed z-[60] w-8 h-8 pointer-events-none"
+                    style={{
+                        left: medal.x,
+                        top: medal.y,
+                        animation: 'fly-to-counter 1s cubic-bezier(0.22, 1, 0.36, 1) forwards'
+                    }}
+                >
+                    <img src={`${import.meta.env.BASE_URL}icons/medals.png`} alt="Medal" className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(234,179,8,0.8)]" />
+                    <style>{`
+                        @keyframes fly-to-counter {
+                            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+                            20% { transform: translate(-50%, -150%) scale(1.5); opacity: 1; }
+                            100% { 
+                                left: 140px; /* Approx x of counter */
+                                top: 40px;   /* Approx y of counter */
+                                transform: translate(-50%, -50%) scale(0.5); 
+                                opacity: 0; 
+                            }
+                        }
+                    `}</style>
+                </div>
+            ))}
+
+            {/* Floating Text Layer */}
+            {floatingTexts.map(text => (
+                <div
+                    key={text.id}
+                    className="fixed z-[61] text-yellow-400 font-bold text-xl pointer-events-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
+                    style={{
+                        left: text.x,
+                        top: text.y,
+                        animation: 'float-up-fade 1s ease-out forwards'
+                    }}
+                >
+                    +2
+                    <style>{`
+                        @keyframes float-up-fade {
+                            0% { transform: translate(-50%, -50%) translateY(0); opacity: 0; }
+                            20% { opacity: 1; transform: translate(-50%, -50%) translateY(-20px); }
+                            100% { opacity: 0; transform: translate(-50%, -50%) translateY(-50px); }
+                        }
+                    `}</style>
+                </div>
+            ))}
+        </div >
     );
 };
 

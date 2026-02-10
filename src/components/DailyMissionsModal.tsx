@@ -8,9 +8,10 @@ interface DailyMissionsModalProps {
     onClose: () => void;
     isClosing: boolean;
     enableExpeditionBg?: boolean;
+    onClaimReward?: (x: number, y: number) => void;
 }
 
-const DailyMissionsModal: React.FC<DailyMissionsModalProps> = ({ username, onClose, isClosing, enableExpeditionBg }) => {
+const DailyMissionsModal: React.FC<DailyMissionsModalProps> = ({ username, onClose, isClosing, enableExpeditionBg, onClaimReward }) => {
     const [missions, setMissions] = useState<UserMission[]>([]);
     const [isVisible, setIsVisible] = useState(false);
     const [timeToReset, setTimeToReset] = useState('');
@@ -35,23 +36,35 @@ const DailyMissionsModal: React.FC<DailyMissionsModalProps> = ({ username, onClo
         return () => clearInterval(interval);
     }, []);
 
-    const handleClaim = async (missionId: string) => {
+    const handleClaim = async (missionId: string, event: React.MouseEvent) => {
+        const rect = (event.target as HTMLElement).getBoundingClientRect();
+        const x = event.clientX;
+        const y = event.clientY;
+
         // If Expedition mode is on, trigger dissolve effect first
         if (enableExpeditionBg) {
             setDissolvingMissionId(missionId);
             // Wait for animation to finish (1.5s)
             setTimeout(async () => {
-                await processClaim(missionId);
+                await processClaim(missionId, x, y);
                 setDissolvingMissionId(null);
             }, 1400);
         } else {
-            await processClaim(missionId);
+            await processClaim(missionId, x, y);
         }
     };
 
-    const processClaim = async (missionId: string) => {
+    const processClaim = async (missionId: string, x: number, y: number) => {
         const result = await db.claimMissionReward(username, missionId);
         if (result.success) {
+            // Award 2 Medals
+            await db.incrementUserStats(username, { medals: 2 });
+
+            // Trigger animation
+            if (onClaimReward) {
+                onClaimReward(x, y);
+            }
+
             setMissions(prev => prev.map(m =>
                 m.missionId === missionId ? { ...m, claimed: true } : m
             ));
@@ -117,7 +130,7 @@ const DailyMissionsModal: React.FC<DailyMissionsModalProps> = ({ username, onClo
                         return (
                             <div
                                 key={mission.missionId}
-                                onClick={() => isClaimable && !isDissolving ? handleClaim(mission.missionId) : null}
+                                onClick={(e) => isClaimable && !isDissolving ? handleClaim(mission.missionId, e) : null}
                                 className={`relative p-4 rounded-lg border leading-tight transition-all duration-300 overflow-hidden
                                     ${isClaimable
                                         ? 'bg-green-900/30 border-green-500 cursor-pointer hover:scale-105 hover:bg-green-900/50 hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] animate-pulse'
