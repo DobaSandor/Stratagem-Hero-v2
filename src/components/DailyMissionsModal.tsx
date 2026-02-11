@@ -37,7 +37,7 @@ const DailyMissionsModal: React.FC<DailyMissionsModalProps> = ({ username, onClo
     }, []);
 
     const handleClaim = async (missionId: string, event: React.MouseEvent) => {
-        const rect = (event.target as HTMLElement).getBoundingClientRect();
+        // const rect = (event.target as HTMLElement).getBoundingClientRect();
         const x = event.clientX;
         const y = event.clientY;
 
