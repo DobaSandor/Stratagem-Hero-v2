@@ -663,6 +663,9 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                 >
                     Logout
                 </button>
+                <div className="text-[10px] text-gray-700 mt-2 font-mono">
+                    v1.3 (Medals Update)
+                </div>
             </div>
 
             {
