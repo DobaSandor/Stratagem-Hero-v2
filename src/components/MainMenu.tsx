@@ -15,6 +15,16 @@ interface MainMenuProps {
     onLogout: () => void;
 }
 
+const getMedalsForLevel = (level: number) => {
+    if (level >= 25) return 20;
+    if (level >= 20) return 5;
+    if (level >= 14) return 4;
+    if (level >= 8) return 3;
+    if (level >= 5) return 2;
+    if (level >= 2) return 1;
+    return 0;
+};
+
 const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [hasPurgedIlluminite, setHasPurgedIlluminite] = useState(false);
@@ -659,9 +669,16 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                 showLevelUp && (
                     <LevelUpModal
                         level={levelData.level}
+                        medalsEarned={getMedalsForLevel(levelData.level)}
                         onClose={() => {
+                            const earned = getMedalsForLevel(levelData.level);
+                            if (earned > 0) {
+                                db.incrementUserStats(username, { medals: earned });
+                                setMedals(prev => prev + earned);
+                            }
                             localStorage.setItem(`stratagem_hero_last_seen_level_${username}`, levelData.level.toString());
                             setShowLevelUp(false);
+                            // Additional fanfare logic if needed
                         }}
                     />
                 )

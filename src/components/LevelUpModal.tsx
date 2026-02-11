@@ -19,10 +19,11 @@ const LEVEL_AVATARS: Record<number, string> = {
 
 interface LevelUpModalProps {
     level: number;
+    medalsEarned: number;
     onClose: () => void;
 }
 
-const LevelUpModal: React.FC<LevelUpModalProps> = ({ level, onClose }) => {
+const LevelUpModal: React.FC<LevelUpModalProps> = ({ level, medalsEarned, onClose }) => {
     const reward: LevelReward | undefined = LEVEL_REWARDS[level];
 
     return (
@@ -48,6 +49,17 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({ level, onClose }) => {
                     <p className="text-gray-400 text-sm">
                         You have reached Level <span className="text-yellow-400 font-bold">{level}</span>.
                     </p>
+
+                    {/* Medal Reward */}
+                    <div className="bg-yellow-900/30 p-4 rounded border border-yellow-500/50 mb-4 animate-pulse">
+                        <div className="flex flex-col items-center gap-2">
+                            <span className="text-yellow-500 text-xs font-bold uppercase tracking-widest">Medal Bonus</span>
+                            <div className="flex items-center gap-3">
+                                <img src={`${import.meta.env.BASE_URL}icons/medals.png`} alt="Medals" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(234,179,8,0.8)]" />
+                                <span className="text-3xl font-black text-white drop-shadow-md">+{medalsEarned}</span>
+                            </div>
+                        </div>
+                    </div>
 
                     {reward && (
                         <div className="bg-gray-800/50 p-4 rounded border border-gray-700/50">
