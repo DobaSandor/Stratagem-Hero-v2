@@ -138,7 +138,7 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
     // Load Endless Stats
     // Load Endless Stats (High Score Only - Credits are session based)
     // Mission Tracking State
-    const [stratagemsBoughtSession, setStratagemsBoughtSession] = useState(0);
+    const [_stratagemsBoughtSession, setStratagemsBoughtSession] = useState(0);
 
 
     // Endless Wave Generator

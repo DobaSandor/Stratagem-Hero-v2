@@ -141,10 +141,10 @@ const GamePage: React.FC<GamePageProps> = ({ onBack, username }) => {
                 }
 
                 // New Permadeath Missions
-                if (difficulty === 'permadeath') {
-                    await db.updateMissionProgress(username, 'sh_matches_3_permadeath', 1);
+                if (difficulty === 'Permadeath') {
+                    await db.updateMissionProgress(username, 'stratagem_hero_matches_permadeath', 1);
                     if (score >= 2000) {
-                        await db.updateMissionProgress(username, 'sh_score_2000_permadeath', score);
+                        await db.updateMissionProgress(username, 'stratagem_hero_score_permadeath', score);
                     }
                 }
             };
