@@ -411,13 +411,22 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                 </div>
 
                 {/* Medals Tooltip */}
-                <div className="absolute left-0 top-14 w-64 bg-linear-to-r from-gray-900 to-yellow-950 p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity border border-yellow-500/30 shadow-xl pointer-events-none z-50">
-                    <h3 className="text-transparent bg-clip-text bg-linear-to-r from-yellow-400 to-green-600 font-bold uppercase tracking-widest mb-2 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]">
-                        Medals
-                    </h3>
-                    <p className="text-[10px] text-yellow-500/80 font-mono leading-relaxed">
-                        Can be used for various purchases, avatars, borders, tokens etc.
-                    </p>
+                <div className="absolute left-0 top-14 w-64 bg-linear-to-r from-gray-900 to-yellow-950 p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity border border-yellow-500/30 shadow-xl pointer-events-none z-50 overflow-hidden">
+                    {/* Background Image */}
+                    <img
+                        src={`${import.meta.env.BASE_URL}icons/skull_bg.png`}
+                        alt=""
+                        className="absolute -right-4 -top-2 w-20 h-20 object-contain opacity-50 rotate-12 pointer-events-none"
+                    />
+
+                    <div className="relative z-10">
+                        <h3 className="text-transparent bg-clip-text bg-linear-to-r from-yellow-400 to-green-600 font-bold uppercase tracking-widest mb-2 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]">
+                            Medals
+                        </h3>
+                        <p className="text-[10px] text-yellow-500/80 font-mono leading-relaxed">
+                            Can be used for various purchases, avatars, borders, tokens etc.
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -818,10 +827,8 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                         alert("Item Shop Under Construction!\nUse your Medals designed for Democracy here soon.");
                     }}
                 >
-                    <div className="relative w-8 h-8 flex items-center justify-center bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-                        </svg>
+                    <div className="relative w-10 h-10 flex items-center justify-center bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-colors">
+                        <img src={`${import.meta.env.BASE_URL}shop_icon.png`} alt="Shop" className="w-7 h-7 object-contain" />
                     </div>
                     <div className="text-left">
                         <div className="text-xs text-yellow-500 font-bold uppercase tracking-widest">Item Shop</div>

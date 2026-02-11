@@ -55,10 +55,14 @@ const DailyMissionsModal: React.FC<DailyMissionsModalProps> = ({ username, onClo
     };
 
     const processClaim = async (missionId: string, x: number, y: number) => {
+        // Find mission definition to get reward
+        const def = MISSION_POOL.find(m => m.id === missionId);
+        const medalReward = def?.medalReward || 2; // Default to 2 if not defined or found (fallback)
+
         const result = await db.claimMissionReward(username, missionId);
         if (result.success) {
-            // Award 2 Medals
-            await db.incrementUserStats(username, { medals: 2 });
+            // Award Medals
+            await db.incrementUserStats(username, { medals: medalReward });
 
             // Trigger animation
             if (onClaimReward) {
@@ -173,7 +177,13 @@ const DailyMissionsModal: React.FC<DailyMissionsModalProps> = ({ username, onClo
                                     <h3 className={`font-bold text-sm ${isClaimed ? 'text-gray-500 line-through' : mission.completed ? 'text-green-400' : 'text-gray-200'}`}>
                                         {def.description}
                                     </h3>
-                                    <div className="flex flex-col items-end">
+                                    <div className="flex flex-col items-end gap-1">
+                                        {/* Medal Reward */}
+                                        <span className={`text-xs font-mono px-2 py-0.5 rounded flex items-center gap-1 ${isClaimed ? 'bg-gray-800 text-gray-500' : 'bg-yellow-900/60 text-yellow-400 border border-yellow-500/30'}`}>
+                                            <img src={`${import.meta.env.BASE_URL}icons/medals.png`} alt="" className="w-3 h-3 object-contain" />
+                                            +2
+                                        </span>
+                                        {/* XP Reward */}
                                         <span className={`text-xs font-mono px-2 py-0.5 rounded ${isClaimed ? 'bg-gray-800 text-gray-500' : mission.completed ? 'bg-green-900 text-green-300' : 'bg-yellow-900/40 text-yellow-500'}`}>
                                             +{def.xpReward} XP
                                         </span>

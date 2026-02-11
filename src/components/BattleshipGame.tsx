@@ -137,6 +137,8 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
 
     // Load Endless Stats
     // Load Endless Stats (High Score Only - Credits are session based)
+    // Mission Tracking State
+    const [stratagemsBoughtSession, setStratagemsBoughtSession] = useState(0);
 
 
     // Endless Wave Generator
@@ -375,6 +377,15 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                 setShowDatapad(false); // Close modal on purchase
                 setAlertMessage("ITEM PURCHASED");
                 setTimeout(() => setAlertMessage(null), 1000);
+
+                // Track "Buy 3 Stratagems" Mission
+                setStratagemsBoughtSession(prev => {
+                    const newVal = prev + 1;
+                    if (newVal <= 3) {
+                        db.updateMissionProgress(username, 'illuminite_invasion_stratagem_buy', newVal);
+                    }
+                    return newVal;
+                });
             }
         }
     };
@@ -387,24 +398,25 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
         if (endlessCredits >= nextUpgrade.cost) {
             setEndlessCredits(prev => prev - nextUpgrade.cost);
             setAmmoUpgradeLevel(prev => prev + 1);
-            // Optional: Refill ammo immediately? Or just update cap. 
-            // Better to just update cap and let standard reload logic handle fill.
-            // But if purchased mid-run (between waves), next wave start might need check.
-            // Endless Mode Score Saving
-            useEffect(() => {
-                if (mode === 'endless' && gameState === 'lost' && !scoreSavedRef.current) {
-                    const finalScore = endlessScore + endlessCredits;
-                    scoreSavedRef.current = true;
-                    db.saveScore(username, finalScore, 'Endless Invasion');
-                }
-                if (gameState === 'setup') {
-                    scoreSavedRef.current = false;
-                }
-            }, [gameState, mode, endlessScore, endlessCredits, username]);
 
-            // Setup Effect above handles setup reset.
+            // Track "Buy Upgrade" Mission
+            db.updateMissionProgress(username, 'illuminite_invasion_upgrade', 1);
         }
     };
+
+    // Endless Mode Score Saving
+    useEffect(() => {
+        if (mode === 'endless' && gameState === 'lost' && !scoreSavedRef.current) {
+            const finalScore = endlessScore + endlessCredits;
+            scoreSavedRef.current = true;
+            db.saveScore(username, finalScore, 'Endless Invasion');
+        }
+        if (gameState === 'setup') {
+            scoreSavedRef.current = false;
+        }
+    }, [gameState, mode, endlessScore, endlessCredits, username]);
+
+
 
 
 
@@ -448,6 +460,11 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
                     }
 
                     setShowEndlessWaveComplete(true);
+
+                    // Mission: Complete 5 Waves (Endless)
+                    if (currentWave >= 5) {
+                        db.updateMissionProgress(username, 'illuminite_invasion_waves', currentWave);
+                    }
                 }
                 return;
             }
@@ -474,9 +491,15 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
 
     const handleEndlessNextWave = () => {
         setShowEndlessWaveComplete(false);
-        setCurrentWave(prev => prev + 1);
+        const nextWave = currentWave + 1;
+        setCurrentWave(nextWave);
         setGameState('setup');
         setNanoRepairUsedCount(0); // Reset repair limit
+
+        // Mission: Reach Wave 3
+        if (nextWave >= 3) {
+            db.updateMissionProgress(username, 'illuminite_invasion_waves', nextWave);
+        }
     };
 
     const handlePostDialogueComplete = () => {
@@ -1210,6 +1233,9 @@ const BattleshipGame = ({ missionConfig: propConfig, onMissionComplete, onMainMe
             setReinforcementLevel(prev => prev + 1);
             setAlertMessage("REINFORCEMENTS UPGRADED");
             setTimeout(() => setAlertMessage(null), 2000);
+
+            // Track "Buy Upgrade" Mission
+            db.updateMissionProgress(username, 'illuminite_invasion_upgrade', 1);
         }
     };
 

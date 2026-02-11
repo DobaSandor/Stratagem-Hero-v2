@@ -1,73 +1,40 @@
-# React + TypeScript + Vite
+# Stratagem Hero v2
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## ⚠️ Disclaimer
+**This is a fan-made project.** Use of the "Stratagem Hero" name, concept, and related assets are for non-commercial, educational, and entertainment purposes only. This project is not affiliated with, endorsed by, or in any way officially connected with Arrowhead Game Studios or Sony Interactive Entertainment. The original game and all it's assets are owned by Arrowhead Game Studios and Sony Interactive Entertainment. The original game(s) is/are available for purchase on the PlayStation Store, Steam, and other platforms.
 
-Currently, two official plugins are available:
+## About the Project
+Stratagem Hero v2 is a web-based recreation and expansion of the Stratagem Hero minigame from Helldivers 2. It features:
+- **Classic Mode**: Train your stratagem inputs.
+- **Endless Mode**: Survive waves of enemies with stratagems (custom game mode).
+- **Illuminite Invasion**: A unique tower defense / arcade style mode.
+- **Permadeath**: High stakes, one life mode.
+- **Daily Missions & Progression**: Earn medals, level up, and unlock titles.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Local Setup
 
-## React Compiler
+### Prerequisites
+- Node.js (v18 or higher recommended)
+- npm
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Installation
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Running Development Server
+```bash
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Building for Production
+```bash
+npm run build
 ```
+
+## Credits
+- Developed by: [Your Name/Handle Here]
+- Original Game Concept: Arrowhead Game Studios
+- Assets: Helldivers 2 Community & Arrowhead Game Studios

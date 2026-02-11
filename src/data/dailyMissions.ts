@@ -2,7 +2,12 @@ export type MissionType =
     | 'stratagem_hero_matches'
     | 'stratagem_hero_score'
     | 'stratagem_hero_perfect_round'
-    | 'truth_enforcers_matches'; // Future proofing
+    | 'illuminite_invasion_waves'
+    | 'illuminite_invasion_upgrade'
+    | 'illuminite_invasion_stratagem_buy'
+    | 'truth_enforcers_matches'
+    | 'stratagem_hero_matches_permadeath'
+    | 'stratagem_hero_score_permadeath';
 
 export interface MissionDefinition {
     id: string;
@@ -10,13 +15,14 @@ export interface MissionDefinition {
     description: string;
     target: number;
     xpReward: number;
+    medalReward?: number;
 }
 
 export interface UserMission {
     missionId: string;
     progress: number;
     completed: boolean;
-    claimed: boolean; // For future manual claiming if needed, currently auto-claim
+    claimed: boolean;
 }
 
 export const MISSION_POOL: MissionDefinition[] = [
@@ -50,12 +56,7 @@ export const MISSION_POOL: MissionDefinition[] = [
     },
     {
         id: 'sh_score_cumulative_10000',
-        type: 'stratagem_hero_score', // We'll handle cumulative logic in the update function by checking if it's cumulative or single
-        // Actually simpler: For "score" type, let's treat it as cumulative by default in the DB updater? 
-        // No, "Score X in a single match" logic is different from "Accumulate X score".
-        // Let's make a new type for clarity if we want cumulative, or just keep it simple for now. 
-        // User asked for "Play 3 matches" (cumulative).
-        // Let's add cumulative score.
+        type: 'stratagem_hero_score',
         description: 'Accumulate 10,000 points in Stratagem Hero',
         target: 10000,
         xpReward: 400
@@ -73,14 +74,57 @@ export const MISSION_POOL: MissionDefinition[] = [
         description: 'Complete 10 Perfect Rounds in Stratagem Hero',
         target: 10,
         xpReward: 600
+    },
+    // --- New Missions ---
+    {
+        id: 'sh_score_2000_permadeath',
+        type: 'stratagem_hero_score_permadeath',
+        description: 'Score 2,000 points on Permadeath Mode in Stratagem Hero',
+        target: 2000,
+        xpReward: 200,
+        medalReward: 1
+    },
+    {
+        id: 'sh_matches_3_permadeath',
+        type: 'stratagem_hero_matches_permadeath',
+        description: 'Play 3 Stratagem Hero matches on Permadeath difficulty',
+        target: 3,
+        xpReward: 150,
+        medalReward: 1
+    },
+    {
+        id: 'ii_waves_5_endless',
+        type: 'illuminite_invasion_waves',
+        description: "Complete 5 Waves in Illuminite Invasion's Endless mode",
+        target: 5,
+        xpReward: 300,
+        medalReward: 1
+    },
+    {
+        id: 'ii_upgrade_buy_any',
+        type: 'illuminite_invasion_upgrade',
+        description: 'Buy any UPGRADE during an Illuminite Invasion Endless match',
+        target: 1,
+        xpReward: 300,
+        medalReward: 2
+    },
+    {
+        id: 'ii_reach_wave_3',
+        type: 'illuminite_invasion_waves',
+        description: 'Reach Wave 3 in Illuminite Endless mode once',
+        target: 3,
+        xpReward: 100,
+        medalReward: 1
+    },
+    {
+        id: 'ii_stratagem_buy_3_single',
+        type: 'illuminite_invasion_stratagem_buy',
+        description: 'Buy 3 Quick use Stratagems during a SINGLE Endless Invasion match',
+        target: 3,
+        xpReward: 200,
+        medalReward: 1
     }
 ];
-
-// Special handling types for the updater to know if it's "Add to progress" or "Check if value > target"
-// Actually, "Play 3 matches" -> Add 1 to progress every match.
-// "Score 5000 in single match" -> Check if score >= 5000. If so, set progress = target.
-// "Accumulate 10000 score" -> Add score to progress.
-// I should refine the generic types to be clearer for the updater.
 
 export const MISSION_UPDATE_LOGIC: Record<string, 'cumulative' | 'high_water_mark'> = {
     'sh_matches_3': 'cumulative',
@@ -89,5 +133,12 @@ export const MISSION_UPDATE_LOGIC: Record<string, 'cumulative' | 'high_water_mar
     'sh_score_5000': 'high_water_mark',
     'sh_score_cumulative_10000': 'cumulative',
     'sh_perfect_3': 'cumulative',
-    'sh_perfect_10': 'cumulative'
+    'sh_perfect_10': 'cumulative',
+    // New Missions
+    'sh_score_2000_permadeath': 'high_water_mark',
+    'sh_matches_3_permadeath': 'cumulative',
+    'ii_waves_5_endless': 'high_water_mark',
+    'ii_upgrade_buy_any': 'cumulative',
+    'ii_reach_wave_3': 'high_water_mark',
+    'ii_stratagem_buy_3_single': 'high_water_mark'
 };

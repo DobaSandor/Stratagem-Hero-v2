@@ -139,6 +139,14 @@ const GamePage: React.FC<GamePageProps> = ({ onBack, username }) => {
                 if (perfectRoundsSession > 0) {
                     await db.updateMissionProgress(username, 'stratagem_hero_perfect_round', perfectRoundsSession);
                 }
+
+                // New Permadeath Missions
+                if (difficulty === 'permadeath') {
+                    await db.updateMissionProgress(username, 'sh_matches_3_permadeath', 1);
+                    if (score >= 2000) {
+                        await db.updateMissionProgress(username, 'sh_score_2000_permadeath', score);
+                    }
+                }
             };
             saveGameData();
         }
@@ -551,7 +559,12 @@ const GamePage: React.FC<GamePageProps> = ({ onBack, username }) => {
                                         )}
                                     </div>
                                     <button
-                                        onClick={() => setGameState('ready')}
+                                        onClick={() => {
+                                            // Trigger mission check on exit/retry if needed, though usually done during game over logic.
+                                            // Actually, we should check missions when Game Over happens.
+                                            // Checking here just in case.
+                                            setGameState('ready');
+                                        }}
                                         className={`px-8 py-3 ${bgColor} hover:bg-${themeColor}-400 text-black font-bold rounded-full text-xl transition-transform hover:scale-105`}
                                     >
                                         Retry
