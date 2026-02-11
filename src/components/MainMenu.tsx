@@ -310,7 +310,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                     </div>
 
                     {/* Tooltip/Full Name on Hover */}
-                    <div className="absolute left-24 top-0 bg-gray-900 text-yellow-400 text-xl px-5 py-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-yellow-400/30 z-50 shadow-xl cursor-default" onClick={(e) => e.stopPropagation()}>
+                    <div className="absolute left-24 top-0 bg-gray-900 text-yellow-400 text-xl px-5 py-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-yellow-400/30 z-50 shadow-xl cursor-default pointer-events-none group-hover:pointer-events-auto" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-between gap-4 mb-2">
                             <div className="font-bold">{username}</div>
                             <div className="text-sm text-yellow-600 font-mono">LVL {levelData.level}</div>
@@ -404,9 +404,21 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
             </div>
 
             {/* Medals Display (Top Left, to the right of User Icon) */}
-            <div className="absolute top-6 left-28 z-50 flex items-center gap-2 bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-full border border-yellow-500/30 shadow-lg animate-in slide-in-from-left duration-700">
-                <img src={`${import.meta.env.BASE_URL}icons/medals.png`} alt="Medals" className="w-6 h-6 object-contain" />
-                <span className="text-yellow-400 font-bold text-lg">{medals}</span>
+            <div className="absolute top-6 left-28 z-40 group cursor-default animate-in slide-in-from-left duration-700">
+                <div className="flex items-center gap-2 bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-full border border-yellow-500/30 shadow-lg group-hover:border-yellow-400/60 transition-colors">
+                    <img src={`${import.meta.env.BASE_URL}icons/medals.png`} alt="Medals" className="w-6 h-6 object-contain" />
+                    <span className="text-yellow-400 font-bold text-lg">{medals}</span>
+                </div>
+
+                {/* Medals Tooltip */}
+                <div className="absolute left-0 top-14 w-64 bg-linear-to-r from-gray-900 to-yellow-950 p-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity border border-yellow-500/30 shadow-xl pointer-events-none z-50">
+                    <h3 className="text-transparent bg-clip-text bg-linear-to-r from-yellow-400 to-green-600 font-bold uppercase tracking-widest mb-2 drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]">
+                        Medals
+                    </h3>
+                    <p className="text-[10px] text-yellow-500/80 font-mono leading-relaxed">
+                        Can be used for various purchases, avatars, borders, tokens etc.
+                    </p>
+                </div>
             </div>
 
             {/* Daily Missions Button */}
