@@ -65,6 +65,33 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ username, onClose, levelDat
     const [redeemMessage, setRedeemMessage] = useState('');
     const [showRewardModal, setShowRewardModal] = useState<{ type: 'border' | 'avatar', id: string, name: string, src: string } | null>(null);
 
+    // Admin State
+    const [adminAnnouncement, setAdminAnnouncement] = useState({
+        title: '',
+        content: '',
+        color: 'yellow' as 'red' | 'yellow' | 'purple' | 'blue',
+        icon: ''
+    });
+    const [adminMessage, setAdminMessage] = useState('');
+
+    const handlePublishAnnouncement = async () => {
+        if (!adminAnnouncement.title || !adminAnnouncement.content) {
+            setAdminMessage('Title and Content required.');
+            return;
+        }
+
+        const success = await db.addAnnouncement({
+            ...adminAnnouncement,
+            author: username
+        });
+
+        if (success) {
+            setAdminMessage('Announcement Published!');
+            setAdminAnnouncement({ title: '', content: '', color: 'yellow', icon: '' });
+            setTimeout(() => setAdminMessage(''), 3000);
+        }
+    };
+
     useEffect(() => {
         const loadData = async () => {
             // Stats
@@ -403,8 +430,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ username, onClose, levelDat
                     </button>
                 </div>
 
+
                 {/* Tabs */}
-                <div className="flex border-b border-gray-800 bg-gray-950/30">
+                <div className="flex border-b border-gray-800 bg-gray-950/30 overflow-x-auto">
                     <button
                         onClick={() => setActiveTab('career')}
                         className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors min-w-[80px] ${activeTab === 'career' ? 'text-yellow-500 border-b-2 border-yellow-500 bg-yellow-500/5' : 'text-gray-500 hover:text-gray-300'}`}
@@ -438,6 +466,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ username, onClose, levelDat
                     >
                         Settings
                     </button>
+                    {username === 'admin' && (
+                        <button
+                            onClick={() => setActiveTab('admin' as any)}
+                            className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors min-w-[80px] ${activeTab === 'admin' as any ? 'text-red-500 border-b-2 border-red-500 bg-red-500/5' : 'text-red-900/50 hover:text-red-400'}`}
+                        >
+                            High Command
+                        </button>
+                    )}
                 </div>
 
                 {/* Content */}
@@ -1023,12 +1059,95 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ username, onClose, levelDat
                                 </div>
                             </div>
                         )}
+
+                        {activeTab === ('admin' as any) && username === 'admin' && (
+                            <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
+                                <div className="bg-red-900/10 p-6 rounded-lg border border-red-900/30">
+                                    <h3 className="text-red-500 text-sm uppercase tracking-widest mb-4 font-bold">Broadcast New Transmission</h3>
+
+                                    {/* Title */}
+                                    <div className="mb-4">
+                                        <label className="block text-gray-400 text-xs uppercase mb-1">Headline</label>
+                                        <input
+                                            type="text"
+                                            value={adminAnnouncement.title}
+                                            onChange={(e) => setAdminAnnouncement({ ...adminAnnouncement, title: e.target.value })}
+                                            className="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white focus:border-red-500 outline-none"
+                                            placeholder="MAJOR ORDER UPDATE..."
+                                        />
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="mb-4">
+                                        <label className="block text-gray-400 text-xs uppercase mb-1">Message Body</label>
+                                        <textarea
+                                            value={adminAnnouncement.content}
+                                            onChange={(e) => setAdminAnnouncement({ ...adminAnnouncement, content: e.target.value })}
+                                            className="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white focus:border-red-500 outline-none h-32"
+                                            placeholder="Enter transmission content..."
+                                        />
+                                    </div>
+
+                                    {/* Configuration Grid */}
+                                    <div className="grid grid-cols-2 gap-4 mb-6">
+                                        {/* Color */}
+                                        <div>
+                                            <label className="block text-gray-400 text-xs uppercase mb-1">Alert Level (Color)</label>
+                                            <div className="flex gap-2">
+                                                {['yellow', 'red', 'purple', 'blue'].map((color) => (
+                                                    <button
+                                                        key={color}
+                                                        onClick={() => setAdminAnnouncement({ ...adminAnnouncement, color: color as any })}
+                                                        className={`w-8 h-8 rounded-full border-2 transition-all ${adminAnnouncement.color === color
+                                                            ? 'border-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.5)]'
+                                                            : 'border-transparent opacity-50 hover:opacity-100'
+                                                            } ${color === 'yellow' ? 'bg-yellow-500' :
+                                                                color === 'red' ? 'bg-red-500' :
+                                                                    color === 'purple' ? 'bg-purple-500' :
+                                                                        'bg-blue-500'
+                                                            }`}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Icon (Simple Selection for now) */}
+                                        <div>
+                                            <label className="block text-gray-400 text-xs uppercase mb-1">Icon Source</label>
+                                            <select
+                                                value={adminAnnouncement.icon}
+                                                onChange={(e) => setAdminAnnouncement({ ...adminAnnouncement, icon: e.target.value })}
+                                                className="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white text-sm focus:border-red-500 outline-none"
+                                            >
+                                                <option value="">No Icon (Default '!')</option>
+                                                <option value={`${import.meta.env.BASE_URL}Automaton icon.png`}>Automaton icon</option>
+                                                <option value={`${import.meta.env.BASE_URL}Illuminite icon.png`}>Illuminite icon</option>
+                                                <option value={`${import.meta.env.BASE_URL}Cyborgs icon.png`}>Cyborgs icon</option>
+                                                <option value={`${import.meta.env.BASE_URL}Helldivers icon.png`}>Helldivers icon</option>
+                                                <option value={`${import.meta.env.BASE_URL}Ministry of Defense icon.png`}>Ministry of Defense icon</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {/* Action */}
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm font-mono text-white/50">{adminMessage}</span>
+                                        <button
+                                            onClick={handlePublishAnnouncement}
+                                            className="bg-red-600 hover:bg-red-500 text-white font-bold uppercase px-6 py-2 rounded shadow-[0_0_15px_rgba(220,38,38,0.3)] transition-all hover:scale-105"
+                                        >
+                                            Publish Transmission
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 {/* Redeem Modal Overlay */}
                 {showRedeemModal && (
-                    <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="absolute inset-0 z-60 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
                         <div className="bg-gray-900 w-full max-w-sm p-6 rounded-xl border border-yellow-500 shadow-2xl relative">
                             <h3 className="text-xl font-bold text-white uppercase tracking-wider mb-4 text-center">Redeem Code</h3>
                             <input
@@ -1061,190 +1180,195 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ username, onClose, levelDat
                         </div>
                     </div>
                 )}
-            </div>
 
 
-            {/* Mass Effect Style Reward Modal */}
-            {/* Reward Modal */}
-            {showRewardModal && (
-                <div className="absolute inset-0 z-[70] flex items-center justify-center bg-black/90 animate-in fade-in duration-500">
 
-                    {/* N7 Theme */}
-                    {showRewardModal.id === 'n7' && (
-                        <div className="relative w-full max-w-lg p-1 bg-gradient-to-br from-red-600 to-red-900 rounded-sm shadow-[0_0_100px_rgba(220,38,38,0.5)]">
-                            <div className="bg-black p-8 relative overflow-hidden flex flex-col items-center">
-                                {/* Diagonal Stripes Background */}
-                                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, #ffffff 10px, #ffffff 11px)' }}></div>
+                {/* Mass Effect Style Reward Modal */}
+                {/* Reward Modal */}
+                {
+                    showRewardModal && (
+                        <div className="absolute inset-0 z-70 flex items-center justify-center bg-black/90 animate-in fade-in duration-500">
 
-                                <div className="relative z-10 flex flex-col items-center">
-                                    <h2 className="text-4xl font-bold italic tracking-widest text-white uppercase mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
-                                        <span className="text-red-600">N7</span> <span className="text-gray-200">Authorized</span>
-                                    </h2>
-                                    <div className="w-full h-px bg-gradient-to-r from-transparent via-red-600 to-transparent mb-8"></div>
+                            {/* N7 Theme */}
+                            {showRewardModal.id === 'n7' && (
+                                <div className="relative w-full max-w-lg p-1 bg-linear-to-br from-red-600 to-red-900 rounded-sm shadow-[0_0_100px_rgba(220,38,38,0.5)]">
+                                    <div className="bg-black p-8 relative overflow-hidden flex flex-col items-center">
+                                        {/* Diagonal Stripes Background */}
+                                        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, #ffffff 10px, #ffffff 11px)' }}></div>
 
-                                    <div className="mb-8 relative">
-                                        <div className="absolute inset-0 bg-red-600 blur-[50px] opacity-20 animate-pulse"></div>
-                                        {showRewardModal.type === 'border' && (
-                                            <div className="w-48 h-48 relative">
-                                                {/* Preview Avatar with Border */}
-                                                <img src={showRewardModal.src} className="absolute inset-0 w-full h-full object-cover z-20" alt="Reward" />
-                                                <div className="absolute inset-4 rounded-full bg-gray-800 overflow-hidden z-10 flex items-center justify-center">
-                                                    <span className="text-4xl font-bold text-gray-500">{username.charAt(0).toUpperCase()}</span>
-                                                </div>
+                                        <div className="relative z-10 flex flex-col items-center">
+                                            <h2 className="text-4xl font-bold italic tracking-widest text-white uppercase mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">
+                                                <span className="text-red-600">N7</span> <span className="text-gray-200">Authorized</span>
+                                            </h2>
+                                            <div className="w-full h-px bg-linear-to-r from-transparent via-red-600 to-transparent mb-8"></div>
+
+                                            <div className="mb-8 relative">
+                                                <div className="absolute inset-0 bg-red-600 blur-[50px] opacity-20 animate-pulse"></div>
+                                                {showRewardModal.type === 'border' && (
+                                                    <div className="w-48 h-48 relative">
+                                                        {/* Preview Avatar with Border */}
+                                                        <img src={showRewardModal.src} className="absolute inset-0 w-full h-full object-cover z-20" alt="Reward" />
+                                                        <div className="absolute inset-4 rounded-full bg-gray-800 overflow-hidden z-10 flex items-center justify-center">
+                                                            <span className="text-4xl font-bold text-gray-500">{username.charAt(0).toUpperCase()}</span>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
 
-                                    <div className="text-center mb-8">
-                                        <div className="text-red-500 text-sm font-bold uppercase tracking-[0.2em] mb-2">Systems Alliance Registry</div>
-                                        <div className="text-2xl text-white font-bold">{showRewardModal.name}</div>
-                                        <div className="text-gray-400 text-sm italic mt-1">Special Operations Classification</div>
-                                    </div>
+                                            <div className="text-center mb-8">
+                                                <div className="text-red-500 text-sm font-bold uppercase tracking-[0.2em] mb-2">Systems Alliance Registry</div>
+                                                <div className="text-2xl text-white font-bold">{showRewardModal.name}</div>
+                                                <div className="text-gray-400 text-sm italic mt-1">Special Operations Classification</div>
+                                            </div>
 
-                                    <button
-                                        onClick={() => setShowRewardModal(null)}
-                                        className="px-10 py-2 bg-linear-to-r from-red-800 to-red-900 text-white font-bold uppercase border border-red-500 hover:bg-red-800 transition-colors skew-x-[-10deg] hover:skew-x-[-15deg] hover:scale-105 shadow-lg border-l-4 border-white"
-                                    >
-                                        <div className="skew-x-[10deg]">Acknowledge</div>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* EXP33 Theme - Gold & Elegant */}
-                    {showRewardModal.id === 'exp33' && (
-                        <div className="relative w-full max-w-lg p-1 bg-linear-to-tr from-yellow-700 via-yellow-400 to-yellow-900 rounded-sm shadow-[0_0_100px_rgba(234,179,8,0.5)]">
-                            {/* Gold Mist Background Effect - Stronger */}
-                            <div className="absolute inset-0 z-[-1] pointer-events-none overflow-visible">
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-yellow-500/30 blur-[120px] animate-[mist-flow_6s_ease-in-out_infinite] rounded-full mix-blend-screen"></div>
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] h-[180%] bg-orange-500/20 blur-[100px] animate-[mist-flow_8s_ease-in-out_infinite_reverse] rounded-full mix-blend-screen"></div>
-                            </div>
-
-                            {/* Foreground Mist for Depth */}
-                            <div className="absolute inset-0 z-[50] pointer-events-none overflow-visible">
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-yellow-200/5 blur-[60px] animate-pulse rounded-full"></div>
-                                {/* Floating Gold Particles */}
-                                {[...Array(50)].map((_, i) => (
-                                    <div
-                                        key={`dust-${i}`}
-                                        className="absolute w-1 h-1 bg-yellow-300 rounded-full shadow-[0_0_2px_#ffd700]"
-                                        style={{
-                                            left: `${Math.random() * 100}%`,
-                                            top: `${50 + Math.random() * 50}%`, // Start from bottom half
-                                            '--move-x': `${(Math.random() - 0.5) * 50}px`,
-                                            animation: `float ${2 + Math.random() * 3}s linear infinite`,
-                                            animationDelay: `-${Math.random() * 5}s`,
-                                            opacity: Math.random() * 0.7
-                                        } as any}
-                                    ></div>
-                                ))}
-                            </div>
-
-                            <div className="bg-gray-950 p-8 relative overflow-hidden flex flex-col items-center">
-                                {/* Elegant Background Overlay */}
-                                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at center, #ffd700 0%, transparent 70%)' }}></div>
-
-                                {/* Falling Rose Petals Animation */}
-                                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-sm">
-                                    {[...Array(20)].map((_, i) => (
-                                        <div
-                                            key={i}
-                                            className="absolute top-0 w-3 h-3 bg-red-600/80 rounded-br-lg rounded-tl-sm shadow-sm"
-                                            style={{
-                                                left: `${Math.random() * 100}%`,
-                                                animation: `fall ${3 + Math.random() * 4}s linear infinite`,
-                                                animationDelay: `-${Math.random() * 5}s`,
-                                                transform: `rotate(${Math.random() * 360}deg)`
-                                            }}
-                                        ></div>
-                                    ))}
-                                </div>
-
-                                {/* Content */}
-                                <div className="relative z-20 flex flex-col items-center justify-center text-center p-4 w-full mt-2">
-                                    <h2 className="text-xl font-serif text-yellow-400 uppercase tracking-widest mb-2 drop-shadow-md w-full px-4 flex flex-col gap-1">
-                                        <span>For Those Who</span>
-                                        <span className="text-2xl font-bold text-yellow-300">Dive After</span>
-                                    </h2>
-
-                                    <div className="mb-2 relative mt-4">
-                                        <div className="absolute inset-0 bg-yellow-500 blur-[60px] opacity-20 animate-pulse"></div>
-                                        <div className="w-40 h-40 relative">
-                                            <img src={showRewardModal.src} className="absolute inset-0 w-full h-full object-cover z-20 scale-110" alt="Reward" />
-                                            <div className="absolute inset-0 border-2 border-yellow-500/50 rounded-full z-30 animate-spin-slow"></div>
+                                            <button
+                                                onClick={() => setShowRewardModal(null)}
+                                                className="px-10 py-2 bg-linear-to-r from-red-800 to-red-900 text-white font-bold uppercase border border-red-500 hover:bg-red-800 transition-colors -skew-x-10 hover:-skew-x-15 hover:scale-105 shadow-lg border-l-4 border-white"
+                                            >
+                                                <div className="skew-x-10">Acknowledge</div>
+                                            </button>
                                         </div>
                                     </div>
-
-                                    <div className="text-yellow-100 font-serif tracking-widest text-sm mb-4">EXCLUSIVE CUSTOMIZATION</div>
-                                    <div className="text-4xl font-bold text-yellow-500 mb-2 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)] font-serif">EXP33</div>
-                                    <div className="text-yellow-200/80 italic text-sm mb-8 animate-pulse">+ Title: "Expeditioner"</div>
-
-                                    <button
-                                        onClick={() => {
-                                            if (isExploding) return; // Prevent double click
-                                            setIsExploding(true);
-                                            // Reset after animation (1s)
-                                            setTimeout(() => {
-                                                setShowRewardModal(null);
-                                                setIsExploding(false);
-                                            }, 1000);
-                                        }}
-                                        className="relative px-8 py-3 bg-linear-to-r from-yellow-700 to-yellow-600 hover:from-yellow-600 hover:to-yellow-500 text-white font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:shadow-[0_0_30px_rgba(234,179,8,0.6)] rounded-sm transition-all transform hover:scale-105 active:scale-95"
-                                    >
-                                        Accept Treasure
-                                        {/* Exploding Petals */}
-                                        {isExploding && (
-                                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                {[...Array(30)].map((_, i) => {
-                                                    const angle = Math.random() * 360;
-                                                    const distance = 100 + Math.random() * 100;
-                                                    const tx = Math.cos(angle * Math.PI / 180) * distance;
-                                                    const ty = Math.sin(angle * Math.PI / 180) * distance;
-                                                    return (
-                                                        <div
-                                                            key={i}
-                                                            className="absolute w-2 h-2 bg-red-600 rounded-full"
-                                                            style={{
-                                                                '--tx': `${tx}px`,
-                                                                '--ty': `${ty}px`,
-                                                                animation: `explode 1s ease-out forwards`,
-                                                                left: 0,
-                                                                top: 0
-                                                            } as any}
-                                                        ></div>
-                                                    );
-                                                })}
-                                                {/* Gold Dust */}
-                                                {[...Array(20)].map((_, i) => {
-                                                    const angle = Math.random() * 360;
-                                                    const distance = 80 + Math.random() * 80;
-                                                    const tx = Math.cos(angle * Math.PI / 180) * distance;
-                                                    const ty = Math.sin(angle * Math.PI / 180) * distance;
-                                                    return (
-                                                        <div
-                                                            key={`gold-${i}`}
-                                                            className="absolute w-1 h-1 bg-yellow-300 rounded-full"
-                                                            style={{
-                                                                '--tx': `${tx}px`,
-                                                                '--ty': `${ty}px`,
-                                                                animation: `explode 0.8s ease-out forwards`,
-                                                                left: 0,
-                                                                top: 0
-                                                            } as any}
-                                                        ></div>
-                                                    );
-                                                })}
-                                            </div>
-                                        )}
-                                    </button>
                                 </div>
-                            </div>
-                        </div>
-                    )}</div>
-            )}
-        </div>
+                            )}
 
+                            {/* EXP33 Theme - Gold & Elegant */}
+                            {showRewardModal.id === 'exp33' && (
+                                <div className="relative w-full max-w-lg p-1 bg-linear-to-tr from-yellow-700 via-yellow-400 to-yellow-900 rounded-sm shadow-[0_0_100px_rgba(234,179,8,0.5)]">
+                                    {/* Gold Mist Background Effect - Stronger */}
+                                    <div className="absolute inset-0 z-[-1] pointer-events-none overflow-visible">
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-yellow-500/30 blur-[120px] animate-[mist-flow_6s_ease-in-out_infinite] rounded-full mix-blend-screen"></div>
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] h-[180%] bg-orange-500/20 blur-[100px] animate-[mist-flow_8s_ease-in-out_infinite_reverse] rounded-full mix-blend-screen"></div>
+                                    </div>
+
+                                    {/* Foreground Mist for Depth */}
+                                    <div className="absolute inset-0 z-50 pointer-events-none overflow-visible">
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-yellow-200/5 blur-[60px] animate-pulse rounded-full"></div>
+                                        {/* Floating Gold Particles */}
+                                        {[...Array(50)].map((_, i) => (
+                                            <div
+                                                key={`dust-${i}`}
+                                                className="absolute w-1 h-1 bg-yellow-300 rounded-full shadow-[0_0_2px_#ffd700]"
+                                                style={{
+                                                    left: `${Math.random() * 100}%`,
+                                                    top: `${50 + Math.random() * 50}%`, // Start from bottom half
+                                                    '--move-x': `${(Math.random() - 0.5) * 50}px`,
+                                                    animation: `float ${2 + Math.random() * 3}s linear infinite`,
+                                                    animationDelay: `-${Math.random() * 5}s`,
+                                                    opacity: Math.random() * 0.7
+                                                } as any}
+                                            ></div>
+                                        ))}
+                                    </div>
+
+                                    <div className="bg-gray-950 p-8 relative overflow-hidden flex flex-col items-center">
+                                        {/* Elegant Background Overlay */}
+                                        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at center, #ffd700 0%, transparent 70%)' }}></div>
+
+                                        {/* Falling Rose Petals Animation */}
+                                        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-sm">
+                                            {[...Array(20)].map((_, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="absolute top-0 w-3 h-3 bg-red-600/80 rounded-br-lg rounded-tl-sm shadow-sm"
+                                                    style={{
+                                                        left: `${Math.random() * 100}%`,
+                                                        animation: `fall ${3 + Math.random() * 4}s linear infinite`,
+                                                        animationDelay: `-${Math.random() * 5}s`,
+                                                        transform: `rotate(${Math.random() * 360}deg)`
+                                                    }}
+                                                ></div>
+                                            ))}
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="relative z-20 flex flex-col items-center justify-center text-center p-4 w-full mt-2">
+                                            <h2 className="text-xl font-serif text-yellow-400 uppercase tracking-widest mb-2 drop-shadow-md w-full px-4 flex flex-col gap-1">
+                                                <span>For Those Who</span>
+                                                <span className="text-2xl font-bold text-yellow-300">Dive After</span>
+                                            </h2>
+
+                                            <div className="mb-2 relative mt-4">
+                                                <div className="absolute inset-0 bg-yellow-500 blur-[60px] opacity-20 animate-pulse"></div>
+                                                <div className="w-40 h-40 relative">
+                                                    <img src={showRewardModal.src} className="absolute inset-0 w-full h-full object-cover z-20 scale-110" alt="Reward" />
+                                                    <div className="absolute inset-0 border-2 border-yellow-500/50 rounded-full z-30 animate-spin-slow"></div>
+                                                </div>
+                                            </div>
+
+                                            <div className="text-yellow-100 font-serif tracking-widest text-sm mb-4">EXCLUSIVE CUSTOMIZATION</div>
+                                            <div className="text-4xl font-bold text-yellow-500 mb-2 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)] font-serif">EXP33</div>
+                                            <div className="text-yellow-200/80 italic text-sm mb-8 animate-pulse">+ Title: "Expeditioner"</div>
+
+                                            <button
+                                                onClick={() => {
+                                                    if (isExploding) return; // Prevent double click
+                                                    setIsExploding(true);
+                                                    // Reset after animation (1s)
+                                                    setTimeout(() => {
+                                                        setShowRewardModal(null);
+                                                        setIsExploding(false);
+                                                    }, 1000);
+                                                }}
+                                                className="relative px-8 py-3 bg-linear-to-r from-yellow-700 to-yellow-600 hover:from-yellow-600 hover:to-yellow-500 text-white font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:shadow-[0_0_30px_rgba(234,179,8,0.6)] rounded-sm transition-all transform hover:scale-105 active:scale-95"
+                                            >
+                                                Accept Treasure
+                                                {/* Exploding Petals */}
+                                                {isExploding && (
+                                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                                        {[...Array(30)].map((_, i) => {
+                                                            const angle = Math.random() * 360;
+                                                            const distance = 100 + Math.random() * 100;
+                                                            const tx = Math.cos(angle * Math.PI / 180) * distance;
+                                                            const ty = Math.sin(angle * Math.PI / 180) * distance;
+                                                            return (
+                                                                <div
+                                                                    key={i}
+                                                                    className="absolute w-2 h-2 bg-red-600 rounded-full"
+                                                                    style={{
+                                                                        '--tx': `${tx}px`,
+                                                                        '--ty': `${ty}px`,
+                                                                        animation: `explode 1s ease-out forwards`,
+                                                                        left: 0,
+                                                                        top: 0
+                                                                    } as any}
+                                                                ></div>
+                                                            );
+                                                        })}
+                                                        {/* Gold Dust */}
+                                                        {[...Array(20)].map((_, i) => {
+                                                            const angle = Math.random() * 360;
+                                                            const distance = 80 + Math.random() * 80;
+                                                            const tx = Math.cos(angle * Math.PI / 180) * distance;
+                                                            const ty = Math.sin(angle * Math.PI / 180) * distance;
+                                                            return (
+                                                                <div
+                                                                    key={`gold-${i}`}
+                                                                    className="absolute w-1 h-1 bg-yellow-300 rounded-full"
+                                                                    style={{
+                                                                        '--tx': `${tx}px`,
+                                                                        '--ty': `${ty}px`,
+                                                                        animation: `explode 0.8s ease-out forwards`,
+                                                                        left: 0,
+                                                                        top: 0
+                                                                    } as any}
+                                                                ></div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            )
+                            }
+                        </div >
+                    )
+                }
+            </div>
+        </div>
     );
 };
 

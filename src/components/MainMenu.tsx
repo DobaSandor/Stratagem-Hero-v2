@@ -4,6 +4,7 @@ import { db } from '../services/db';
 import LevelUpModal from './LevelUpModal';
 import ProfileModal from './ProfileModal';
 import DailyMissionsModal from './DailyMissionsModal';
+import NewsModal from './NewsModal';
 import StarryBackground from './StarryBackground';
 import { MISSION_POOL } from '../data/dailyMissions';
 import type { UserMission } from '../data/dailyMissions';
@@ -37,6 +38,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
     const [showLevelUp, setShowLevelUp] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showDailyMissions, setShowDailyMissions] = useState(false);
+    const [showNews, setShowNews] = useState(false);
     const [isClosingMissions, setIsClosingMissions] = useState(false);
     const [missions, setMissions] = useState<UserMission[]>([]);
     const [activeBorder, setActiveBorder] = useState('default');
@@ -818,6 +820,24 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                 />
             </div>
 
+            {/* News / Datapad Button (Bottom Right) */}
+            <div className="absolute bottom-4 right-4 z-50 animate-in slide-in-from-bottom-8 duration-700 delay-100">
+                <button
+                    className="group relative flex items-center gap-3 bg-gray-900/80 backdrop-blur-md px-4 py-3 rounded-xl border border-yellow-500/30 hover:border-yellow-500 transition-all duration-300 hover:scale-105 shadow-[0_0_15px_rgba(234,179,8,0.1)] hover:shadow-[0_0_25px_rgba(234,179,8,0.3)]"
+                    onClick={() => setShowNews(true)}
+                >
+                    <div className="relative w-10 h-10 flex items-center justify-center bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                        </svg>
+                    </div>
+                    <div className="text-left">
+                        <div className="text-xs text-yellow-500 font-bold uppercase tracking-widest">Datapad</div>
+                        <div className="text-[10px] text-gray-400">News & Updates</div>
+                    </div>
+                </button>
+            </div>
+
             {/* Item Shop Button (Bottom Left, above Audio Controls) */}
             <div className="absolute bottom-20 left-4 z-50 animate-in slide-in-from-bottom-8 duration-700">
                 <button
@@ -885,6 +905,8 @@ const MainMenu: React.FC<MainMenuProps> = ({ username, onStart, onLogout }) => {
                     `}</style>
                 </div>
             ))}
+
+            <NewsModal isOpen={showNews} onClose={() => setShowNews(false)} username={username} />
         </div >
     );
 };

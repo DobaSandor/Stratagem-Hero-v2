@@ -37,4 +37,4 @@ npm run build
 ## Credits
 - Developed by: [Your Name/Handle Here]
 - Original Game Concept: Arrowhead Game Studios
-- Assets: Helldivers 2 Community & Arrowhead Game Studios
+- Assets: Helldivers 2 Community & Arrowhead Game Studios, Canva

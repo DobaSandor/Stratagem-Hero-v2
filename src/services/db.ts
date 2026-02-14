@@ -83,8 +83,19 @@ export interface GiftItem {
 import { MISSION_POOL, MISSION_UPDATE_LOGIC } from '../data/dailyMissions';
 import type { MissionType, UserMission } from '../data/dailyMissions';
 
+export interface Announcement {
+    id: string;
+    title: string;
+    content: string;
+    date: string;
+    color: 'red' | 'yellow' | 'purple' | 'blue';
+    icon?: string;
+    author: string;
+}
+
 const USERS_KEY = 'stratagem_hero_users';
 const SCORES_KEY = 'stratagem_hero_highscores_v2'; // Changed key for new format
+const ANNOUNCEMENTS_KEY = 'stratagem_hero_announcements';
 
 // Helper to generate 12-char UID
 const generateUID = () => {
@@ -626,6 +637,56 @@ export const db = {
         }
 
         return enrichedScores;
+    },
+
+    // --- ANNOUNCEMENTS SYSTEM ---
+    getAnnouncements: async (): Promise<Announcement[]> => {
+        // 1. Supabase
+        if (supabase) {
+            const { data, error } = await supabase
+                .from('announcements')
+                .select('*')
+                .order('date', { ascending: false });
+            if (!error && data) return data;
+        }
+
+        // 2. Local Storage
+        const stored = localStorage.getItem(ANNOUNCEMENTS_KEY);
+        return stored ? JSON.parse(stored) : [];
+    },
+
+    addAnnouncement: async (announcement: Omit<Announcement, 'id' | 'date'>): Promise<boolean> => {
+        const newAnnouncement: Announcement = {
+            ...announcement,
+            id: Date.now().toString(),
+            date: new Date().toISOString()
+        };
+
+        // 1. Supabase
+        if (supabase) {
+            await supabase.from('announcements').insert([newAnnouncement]);
+        }
+
+        // 2. Local Storage
+        const current = await db.getAnnouncements();
+        const updated = [newAnnouncement, ...current];
+        localStorage.setItem(ANNOUNCEMENTS_KEY, JSON.stringify(updated));
+
+        return true;
+    },
+
+    deleteAnnouncement: async (id: string): Promise<boolean> => {
+        // 1. Supabase
+        if (supabase) {
+            await supabase.from('announcements').delete().eq('id', id);
+        }
+
+        // 2. Local Storage
+        const current = await db.getAnnouncements();
+        const updated = current.filter(a => a.id !== id);
+        localStorage.setItem(ANNOUNCEMENTS_KEY, JSON.stringify(updated));
+
+        return true;
     },
 
     getUserScore: async (username: string, difficulty: string): Promise<number> => {
