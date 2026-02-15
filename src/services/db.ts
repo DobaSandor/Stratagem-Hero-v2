@@ -199,12 +199,13 @@ export const db = {
                         friends: localStats.friends,
                         friend_requests: localStats.friendRequests,
                         skip_intro: localStats.skipIntro,
-                        use_dark_intro: localStats.useDarkIntro,
+                        use_dark_intro: localStats.useDarkIntro ?? true,
                         last_active: localStats.lastActive,
                         friendships: localStats.friendships,
                         gifts_received: localStats.giftsReceived,
                         truth_enforcers: localStats.truthEnforcers,
                         enable_spin: localStats.enableSpin,
+                        enable_space_bg: localStats.enableSpaceBg ?? true,
                         unlocked_borders: localStats.unlockedBorders,
                         unlocked_codes: localStats.unlockedCodes,
                         medals: localStats.medals || 0
@@ -894,7 +895,9 @@ export const db = {
             activeTitle: null,
             unlockedBorders: [],
             unlockedCodes: [],
-            medals: 0
+            medals: 0,
+            useDarkIntro: true, // Default to true per user request
+            enableSpaceBg: true // Default to true per user request
         };
 
         let fromSupabase = false;
@@ -924,7 +927,7 @@ export const db = {
                         friends: data.friends || [],
                         friendRequests: data.friend_requests || [],
                         skipIntro: data.skip_intro || false,
-                        useDarkIntro: data.use_dark_intro || false,
+                        useDarkIntro: data.use_dark_intro ?? true,
                         lastActive: data.last_active || 0,
                         friendships: data.friendships || {},
 
@@ -932,7 +935,7 @@ export const db = {
                         truthEnforcers: data.truth_enforcers || { day: 1, credits: 100, items: [] },
                         enableSpin: data.enable_spin ?? false,
                         // Cloud doesn't support this yet, use local or default
-                        enableSpaceBg: data.enable_space_bg ?? local.enableSpaceBg ?? false,
+                        enableSpaceBg: data.enable_space_bg ?? local.enableSpaceBg ?? true,
                         // Prioritize local for this setting to prevent server defaults from overwriting user preference if sync is delayed/missing column
                         useExpeditionBackground: local.useExpeditionBackground ?? data.use_expedition_background ?? false,
                         illuminate: data.illuminate || local.illuminate || { highScore: 0, credits: 0, inventory: [] },
